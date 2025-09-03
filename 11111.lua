@@ -133,7 +133,7 @@ local AutoFarmBtn = ScriptsTab:CreateButton({
    end,
 })
 
--- 🔫 Gun Mods
+-- 🔫 Gun Mods (ИСПРАВЛЕННАЯ ФУНКЦИЯ)
 local GunModsBtn = ScriptsTab:CreateButton({
    Name = "🔫 Gun Mods | FE",
    Callback = function()
@@ -142,7 +142,7 @@ local GunModsBtn = ScriptsTab:CreateButton({
          Title = "✅ Успех!",
          Content = "Моды на оружие активированы!",
          Duration = 3,
-      )
+      })
    end,
 })
 
