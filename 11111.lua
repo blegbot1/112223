@@ -9,10 +9,16 @@ local Window = Rayfield:CreateWindow({
       FolderName = "FEScriptHub",
       FileName = "UserConfig"
    },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+   KeySystem = false,
 })
 
 -- 📜 Вкладка со скриптами
-local ScriptsTab = Window:CreateTab("📜 Готовые скрипты", 0)
+local ScriptsTab = Window:CreateTab("📜 Готовые скрипты", 4483362458)
 local FEScriptSection = ScriptsTab:CreateSection("⚡ FE SCRIPTS 🚀")
 
 -- 👽 G-Men скрипт
@@ -55,7 +61,7 @@ local TelekinesisBtn = ScriptsTab:CreateButton({
    end,
 })
 
--- 🚗 FE Car Script (добавлен новый скрипт)
+-- 🚗 FE Car Script
 local FECarBtn = ScriptsTab:CreateButton({
    Name = "🚗 FE Car Script | FE",
    Callback = function()
@@ -186,7 +192,7 @@ local InfiniteYieldBtn = ScriptsTab:CreateButton({
 })
 
 -- 🎯 Вкладка Aim Bot
-local AimBotTab = Window:CreateTab("🎯 Aim Bot", 0)
+local AimBotTab = Window:CreateTab("🎯 Aim Bot", 4483362458)
 local AimBotSection = AimBotTab:CreateSection("Universal Aimbot Settings")
 
 local aimbotSettings = {
@@ -216,6 +222,7 @@ fovCircle.Radius = aimbotSettings.FOV
 fovCircle.Color = aimbotSettings.FOVColor
 fovCircle.Thickness = 2
 fovCircle.Position = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2)
+fovCircle.Filled = false
 
 local AimEnabledToggle = AimBotTab:CreateToggle({
    Name = "Включить Aim Bot",
@@ -431,7 +438,7 @@ runService.RenderStepped:Connect(function()
 end)
 
 -- 👁️ Вкладка Visuals
-local VisualsTab = Window:CreateTab("👁️ Visuals", 0)
+local VisualsTab = Window:CreateTab("👁️ Visuals", 4483362458)
 local VisualsSection = VisualsTab:CreateSection("ESP Settings")
 
 local visualsSettings = {
@@ -626,7 +633,8 @@ local function updateVisuals(player)
         
         local screenPoints = {}
         for i, point in ipairs(points) do
-            screenPoints[i] = camera:WorldToViewportPoint(point.Position)
+            local screenPoint = camera:WorldToViewportPoint(point.Position)
+            screenPoints[i] = screenPoint
         end
         
         local connections = {
@@ -1024,18 +1032,28 @@ task.spawn(function()
 end)
 
 -- Автоматическое обновление ESP при возрождении игроков
+for _, player in ipairs(players:GetPlayers()) do
+    if player ~= localPlayer then
+        player.CharacterAdded:Connect(function(character)
+            if visualsSettings.Enabled then
+                clearVisuals(player)
+                task.wait(0.1)
+                createVisuals(player)
+            end
+        end)
+    end
+end
+
 players.PlayerAdded:Connect(function(player)
-    if visualsSettings.Enabled then
+    if visualsSettings.Enabled and player ~= localPlayer then
         createVisuals(player)
         
         player.CharacterAdded:Connect(function(character)
-            character:WaitForChild("Humanoid").Died:Connect(function()
-                if visualsSettings.Enabled then
-                    clearVisuals(player)
-                    task.wait(0.1)
-                    createVisuals(player)
-                end
-            end)
+            if visualsSettings.Enabled then
+                clearVisuals(player)
+                task.wait(0.1)
+                createVisuals(player)
+            end
         end)
     end
 end)
@@ -1045,6 +1063,20 @@ players.PlayerRemoving:Connect(function(player)
 end)
 
 -- Очистка ESP при смерти локального игрока
+if localPlayer.Character then
+    localPlayer.Character:WaitForChild("Humanoid").Died:Connect(function()
+        if visualsSettings.Enabled then
+            clearAllVisuals()
+            task.wait(0.1)
+            for _, player in ipairs(players:GetPlayers()) do
+                if player ~= localPlayer then
+                    createVisuals(player)
+                end
+            end
+        end
+    end)
+end
+
 localPlayer.CharacterAdded:Connect(function(character)
     character:WaitForChild("Humanoid").Died:Connect(function()
         if visualsSettings.Enabled then
@@ -1060,7 +1092,7 @@ localPlayer.CharacterAdded:Connect(function(character)
 end)
 
 -- ⚔️ Вкладка Убить Всех
-local KillAllTab = Window:CreateTab("⚔️ Убить Всех", 0)
+local KillAllTab = Window:CreateTab("⚔️ Убить Всех", 4483362458)
 local KillAllSection = KillAllTab:CreateSection("Safe Zone Kill All")
 
 local player = game:GetService("Players").LocalPlayer
