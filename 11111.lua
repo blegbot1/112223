@@ -396,7 +396,7 @@ runService.RenderStepped:Connect(function()
                     local screenPos = camera:WorldToScreenPoint(targetPosition)
                     if screenPos then
                         local mouse = game:GetService("Players").LocalPlayer:GetMouse()
-                        local smoothness = math.clamp(aimbotSettings.Smoothness, 0.1, 1)
+                        local smoothness = math.clamp(aimbotSettings.Smoothness, 0.1, 0.5) -- Ограничил сглаживание
                         
                         mousemoverel(
                             (screenPos.X - mouse.X) * smoothness,
@@ -406,7 +406,7 @@ runService.RenderStepped:Connect(function()
                 else
                     local currentCFrame = camera.CFrame
                     local targetCFrame = CFrame.new(currentCFrame.Position, targetPosition)
-                    camera.CFrame = currentCFrame:Lerp(targetCFrame, aimbotSettings.Smoothness)
+                    camera.CFrame = currentCFrame:Lerp(targetCFrame, math.clamp(aimbotSettings.Smoothness, 0.1, 0.5))
                 end
             end
         end
@@ -441,15 +441,14 @@ local visualsSettings = {
     Box2DWidth = 50,
     Box2DHeight = 80,
     Box3DSize = 2.0,
-    TracerFrom = "Bottom",
+    TracerFromPosition = "Bottom",
     
     -- Новые настройки позиционирования
     Box2DVerticalOffset = 0,
     Box2DHorizontalOffset = 0,
     NameVerticalOffset = -80,
     HealthVerticalOffset = -60,
-    DistanceVerticalOffset = -40,
-    TracerFromPosition = "Bottom"
+    DistanceVerticalOffset = -40
 }
 
 local visualsObjects = {}
@@ -535,29 +534,26 @@ local function updateVisuals(player)
         teamColor = Color3.fromRGB(0, 0, 255)
     end
     
-    for _, obj in pairs(visualsObjects[player]) do
-        if type(obj) == "table" then
-            for _, line in pairs(obj) do
-                line.Color = teamColor
-                line.Thickness = visualsSettings.BoxThickness
-            end
-        elseif obj == visualsObjects[player].Tracer then
-            obj.Color = visualsSettings.TracerColor
-            obj.Thickness = visualsSettings.TracerThickness
-        elseif obj == visualsObjects[player].Name then
-            obj.Color = visualsSettings.NameColor
-            obj.Size = visualsSettings.TextSize
-        elseif obj == visualsObjects[player].Health then
-            obj.Color = visualsSettings.HealthColor
-            obj.Size = visualsSettings.TextSize
-        elseif obj == visualsObjects[player].Distance then
-            obj.Color = visualsSettings.DistanceColor
-            obj.Size = visualsSettings.TextSize
-        else
-            obj.Color = teamColor
-            obj.Thickness = visualsSettings.BoxThickness
-        end
+    -- Обновляем свойства всех элементов
+    for _, line in pairs(visualsObjects[player].Box3D) do
+        line.Color = teamColor
+        line.Thickness = visualsSettings.BoxThickness
     end
+    
+    visualsObjects[player].Box2D.Color = teamColor
+    visualsObjects[player].Box2D.Thickness = visualsSettings.BoxThickness
+    
+    visualsObjects[player].Tracer.Color = visualsSettings.TracerColor
+    visualsObjects[player].Tracer.Thickness = visualsSettings.TracerThickness
+    
+    visualsObjects[player].Name.Color = visualsSettings.NameColor
+    visualsObjects[player].Name.Size = visualsSettings.TextSize
+    
+    visualsObjects[player].Health.Color = visualsSettings.HealthColor
+    visualsObjects[player].Health.Size = visualsSettings.TextSize
+    
+    visualsObjects[player].Distance.Color = visualsSettings.DistanceColor
+    visualsObjects[player].Distance.Size = visualsSettings.TextSize
     
     local rootPos, rootVis = camera:WorldToViewportPoint(rootPart.Position)
     local headPos, headVis = camera:WorldToViewportPoint(head.Position)
@@ -630,21 +626,17 @@ local function updateVisuals(player)
         end
     end
     
-    -- 2D Box (правильное позиционирование вокруг игрока)
+    -- 2D Box (фиксированный размер)
     if visualsSettings.Box2D then
         local rootScreenPos = camera:WorldToViewportPoint(rootPart.Position)
         local headScreenPos = camera:WorldToViewportPoint(head.Position)
         
-        local height = math.abs(headScreenPos.Y - rootScreenPos.Y) * 2
-        local width = height / 2
+        local height = math.abs(headScreenPos.Y - rootScreenPos.Y) * 2.2
+        local width = height * 0.6
         
-        visualsObjects[player].Box2D.Size = Vector2.new(
-            visualsSettings.Box2DWidth + width / 2,
-            visualsSettings.Box2DHeight + height / 2
-        )
-        
+        visualsObjects[player].Box2D.Size = Vector2.new(width, height)
         visualsObjects[player].Box2D.Position = Vector2.new(
-            rootScreenPos.X - visualsSettings.Box2DWidth/2 + visualsSettings.Box2DHorizontalOffset,
+            rootScreenPos.X - width/2 + visualsSettings.Box2DHorizontalOffset,
             rootScreenPos.Y - height + visualsSettings.Box2DVerticalOffset
         )
         visualsObjects[player].Box2D.Visible = true
@@ -672,7 +664,7 @@ local function updateVisuals(player)
         visualsObjects[player].Tracer.Visible = false
     end
     
-    -- Name
+    -- Name (фиксированный размер текста)
     if visualsSettings.Names then
         local headScreenPos = camera:WorldToViewportPoint(head.Position)
         visualsObjects[player].Name.Text = player.Name
@@ -820,24 +812,24 @@ local MaxDistanceSlider = VisualsTab:CreateSlider({
 
 -- Новые настройки позиционирования
 local Box2DWidthSlider = VisualsTab:CreateSlider({
-   Name = "2D Box Width",
-   Range = {20, 200},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.Box2DWidth,
+   Name = "2D Box Width Scale",
+   Range = {0.5, 2},
+   Increment = 0.1,
+   Suffix = "x",
+   CurrentValue = 1,
    Callback = function(Value)
-      visualsSettings.Box2DWidth = Value
+      visualsSettings.Box2DWidth = 50 * Value
    end,
 })
 
 local Box2DHeightSlider = VisualsTab:CreateSlider({
-   Name = "2D Box Height",
-   Range = {40, 300},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.Box2DHeight,
+   Name = "2D Box Height Scale",
+   Range = {0.5, 2},
+   Increment = 0.1,
+   Suffix = "x",
+   CurrentValue = 1,
    Callback = function(Value)
-      visualsSettings.Box2DHeight = Value
+      visualsSettings.Box2DHeight = 80 * Value
    end,
 })
 
@@ -990,17 +982,20 @@ local DistanceColorPicker = VisualsTab:CreateColorPicker({
    end,
 })
 
--- Основной цикл Visuals
-runService.RenderStepped:Connect(function()
-    if not visualsSettings.Enabled then return end
-    
-    for _, player in ipairs(players:GetPlayers()) do
-        if player ~= localPlayer then
-            if not visualsObjects[player] then
-                createVisuals(player)
+-- Основной цикл Visuals (максимальная производительность)
+task.spawn(function()
+    while true do
+        if visualsSettings.Enabled then
+            for _, player in ipairs(players:GetPlayers()) do
+                if player ~= localPlayer then
+                    if not visualsObjects[player] then
+                        createVisuals(player)
+                    end
+                    updateVisuals(player)
+                end
             end
-            updateVisuals(player)
         end
+        task.wait()
     end
 end)
 
@@ -1102,38 +1097,41 @@ local function isFriendWith(p1, p2)
    return p1:IsFriendsWith(p2.UserId)
 end
 
-RunService.RenderStepped:Connect(function()
-   local myChar = player.Character
-   if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then return end
-   
-   local root = myChar.HumanoidRootPart
-   zonePart.Position = root.Position
-   zonePart.Size = Vector3.new(safeZoneRadius * 2, safeZoneRadius * 2, safeZoneRadius * 2)
-   
-   if not isActive then return end
-   
-   local tool = myChar:FindFirstChildOfClass("Tool")
-   if not tool or not tool:FindFirstChild("Handle") then return end
-   
-   for _, other in ipairs(Players:GetPlayers()) do
-      if other ~= player and other.Character and other.Character:FindFirstChild("HumanoidRootPart") then
-         local oRoot = other.Character.HumanoidRootPart
-         local dist = (oRoot.Position - root.Position).Magnitude
-         
-         local shouldAttack = killAllEnabled or (dist > safeZoneRadius)
-         local isFriend = ignoreFriends and isFriendWith(player, other)
-         
-         if shouldAttack and not isFriend and dist <= 1000 then
-            tool:Activate()
-            for _, part in pairs(other.Character:GetChildren()) do
-               if part:IsA("BasePart") then
-                  firetouchinterest(tool.Handle, part, 0)
-                  firetouchinterest(tool.Handle, part, 1)
-               end
+task.spawn(function()
+    while true do
+        local myChar = player.Character
+        if myChar and myChar:FindFirstChild("HumanoidRootPart") then
+            local root = myChar.HumanoidRootPart
+            zonePart.Position = root.Position
+            zonePart.Size = Vector3.new(safeZoneRadius * 2, safeZoneRadius * 2, safeZoneRadius * 2)
+            
+            if isActive then
+                local tool = myChar:FindFirstChildOfClass("Tool")
+                if tool and tool:FindFirstChild("Handle") then
+                    for _, other in ipairs(Players:GetPlayers()) do
+                        if other ~= player and other.Character and other.Character:FindFirstChild("HumanoidRootPart") then
+                            local oRoot = other.Character.HumanoidRootPart
+                            local dist = (oRoot.Position - root.Position).Magnitude
+                            
+                            local shouldAttack = killAllEnabled or (dist > safeZoneRadius)
+                            local isFriend = ignoreFriends and isFriendWith(player, other)
+                            
+                            if shouldAttack and not isFriend and dist <= 1000 then
+                                tool:Activate()
+                                for _, part in pairs(other.Character:GetChildren()) do
+                                    if part:IsA("BasePart") then
+                                        firetouchinterest(tool.Handle, part, 0)
+                                        firetouchinterest(tool.Handle, part, 1)
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
             end
-         end
-      end
-   end
+        end
+        task.wait()
+    end
 end)
 
 Rayfield:Notify({
