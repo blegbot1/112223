@@ -1,0 +1,945 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "?? FE Script Hub | База скриптов",
+   LoadingTitle = "? Загрузка FE Script Hub...",
+   LoadingSubtitle = "?? Готовые FE скрипты",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "FEScriptHub",
+      FileName = "UserConfig"
+   },
+})
+
+-- ?? Вкладка со скриптами
+local ScriptsTab = Window:CreateTab("?? Готовые скрипты", 0)
+
+-- ? ЕДИНЫЙ РАЗДЕЛ С ВСЕМИ СКРИПТАМИ
+local FEScriptSection = ScriptsTab:CreateSection("? FE SCRIPTS ??")
+
+-- ?? G-Men скрипт
+local GMenBtn = ScriptsTab:CreateButton({
+   Name = "?? G-Men Script | FE",
+   Callback = function()
+      _G.clientsidedeffect = true
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/randomstring0/Qwerty/refs/heads/main/qwerty18.lua"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "G-Men скрипт активирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ????? Zombie Script
+local ZombieBtn = ScriptsTab:CreateButton({
+   Name = "????? Zombie Script | FE",
+   Callback = function()
+      loadstring(game:HttpGet('https://pastefy.app/w7KnPY70/raw',true))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Zombie скрипт активирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Telekinesis V5
+local TelekinesisBtn = ScriptsTab:CreateButton({
+   Name = "?? Telekinesis V5 | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/blegbot1/telekines-v5/refs/heads/main/telekines%20v5.lua"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Telekinesis V5 активирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Бесконечные прыжки
+local InfiniteJumpBtn = ScriptsTab:CreateButton({
+   Name = "?? Infinite Jump | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/U5y7pWbJ"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Бесконечные прыжки активированы!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Высокая скорость
+local SpeedBtn = ScriptsTab:CreateButton({
+   Name = "?? Speed Hack | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rqg2"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Скорость увеличена!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Полёт
+local FlyBtn = ScriptsTab:CreateButton({
+   Name = "?? Fly Script | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/MY1u0WZz"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Полёт активирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ??? God Mode
+local GodModeBtn = ScriptsTab:CreateButton({
+   Name = "??? God Mode | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/4XJZc7Y9"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Режим бога активирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Esp
+local EspBtn = ScriptsTab:CreateButton({
+   Name = "?? ESP | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/5KJZc8Y0"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "ESP активирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Auto Farm
+local AutoFarmBtn = ScriptsTab:CreateButton({
+   Name = "?? Auto Farm | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/6LJZc9Y1"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Авто-ферма запущена!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Gun Mods
+local GunModsBtn = ScriptsTab:CreateButton({
+   Name = "?? Gun Mods | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/7MJZd0Y2"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Моды на оружие активированы!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? VIP Script
+local VipBtn = ScriptsTab:CreateButton({
+   Name = "?? VIP Script | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://pastebin.com/raw/8NJZe1Y3"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "VIP скрипт активирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Infinite Yield
+local InfiniteYieldBtn = ScriptsTab:CreateButton({
+   Name = "?? Infinite Yield | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+      Rayfield:Notify({
+         Title = "? Успех!",
+         Content = "Infinite Yield загружен!",
+         Duration = 3,
+      })
+   end,
+})
+
+-- ?? Вкладка Aim Bot
+local AimBotTab = Window:CreateTab("?? Aim Bot", 0)
+local AimBotSection = AimBotTab:CreateSection("Universal Aimbot Settings")
+
+-- Простой рабочий Aim Bot
+local aimbotSettings = {
+    Enabled = false,
+    TeamCheck = false,
+    WallCheck = false,
+    Smoothness = 0.3,
+    FOV = 120,
+    AimPart = "Head",
+    TriggerKey = "MouseButton2",
+    ToggleMode = false,
+    FOVVisible = true,
+    AimKeyDown = false,
+    UseMouse = true
+}
+
+-- Переменные для работы aimbot
+local camera = workspace.CurrentCamera
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+local inputService = game:GetService("UserInputService")
+local runService = game:GetService("RunService")
+
+local AimEnabledToggle = AimBotTab:CreateToggle({
+   Name = "Включить Aim Bot",
+   CurrentValue = aimbotSettings.Enabled,
+   Callback = function(Value)
+      aimbotSettings.Enabled = Value
+      Rayfield:Notify({
+         Title = "?? Aim Bot",
+         Content = Value and "Aim Bot активирован!" or "Aim Bot деактивирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+local TeamCheckToggle = AimBotTab:CreateToggle({
+   Name = "Проверка команды",
+   CurrentValue = aimbotSettings.TeamCheck,
+   Callback = function(Value)
+      aimbotSettings.TeamCheck = Value
+   end,
+})
+
+local SmoothnessSlider = AimBotTab:CreateSlider({
+   Name = "Сглаживание",
+   Range = {0.1, 1},
+   Increment = 0.05,
+   Suffix = "x",
+   CurrentValue = aimbotSettings.Smoothness,
+   Callback = function(Value)
+      aimbotSettings.Smoothness = Value
+   end,
+})
+
+local FOVSlider = AimBotTab:CreateSlider({
+   Name = "Поле зрения (FOV)",
+   Range = {50, 300},
+   Increment = 10,
+   Suffix = "px",
+   CurrentValue = aimbotSettings.FOV,
+   Callback = function(Value)
+      aimbotSettings.FOV = Value
+   end,
+})
+
+local AimPartDropdown = AimBotTab:CreateDropdown({
+   Name = "Часть тела для прицеливания",
+   Options = {"Head", "HumanoidRootPart", "UpperTorso"},
+   CurrentOption = aimbotSettings.AimPart,
+   Callback = function(Option)
+      aimbotSettings.AimPart = Option
+   end,
+})
+
+local TriggerKeyDropdown = AimBotTab:CreateDropdown({
+   Name = "Клавиша активации",
+   Options = {"MouseButton2", "MouseButton1", "LeftShift", "LeftControl", "Q", "E", "R", "F", "C", "V", "X", "Z"},
+   CurrentOption = aimbotSettings.TriggerKey,
+   Callback = function(Option)
+      aimbotSettings.TriggerKey = Option
+   end,
+})
+
+local ToggleModeToggle = AimBotTab:CreateToggle({
+   Name = "Режим переключения",
+   CurrentValue = aimbotSettings.ToggleMode,
+   Callback = function(Value)
+      aimbotSettings.ToggleMode = Value
+   end,
+})
+
+local MouseAimToggle = AimBotTab:CreateToggle({
+   Name = "Использовать мышь (фикс 3 лица)",
+   CurrentValue = aimbotSettings.UseMouse,
+   Callback = function(Value)
+      aimbotSettings.UseMouse = Value
+   end,
+})
+
+-- Функция для получения ближайшего игрока
+local function getClosestPlayer()
+    if not localPlayer.Character then return nil end
+    
+    local closestPlayer = nil
+    local closestDistance = aimbotSettings.FOV
+    local mousePos = inputService:GetMouseLocation()
+    
+    for _, player in ipairs(players:GetPlayers()) do
+        if player ~= localPlayer and player.Character then
+            local character = player.Character
+            local humanoid = character:FindFirstChildOfClass("Humanoid")
+            
+            if humanoid and humanoid.Health > 0 then
+                if aimbotSettings.TeamCheck and player.Team == localPlayer.Team then
+                    continue
+                end
+                
+                local aimPart = character:FindFirstChild(aimbotSettings.AimPart)
+                if aimPart then
+                    local screenPos, onScreen = camera:WorldToViewportPoint(aimPart.Position)
+                    
+                    if onScreen then
+                        local distance = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                        
+                        if distance < closestDistance then
+                            closestDistance = distance
+                            closestPlayer = player
+                        end
+                    end
+                end
+            end
+        end
+    end
+    
+    return closestPlayer
+end
+
+-- Правильная обработка клавиш
+local keyBinds = {
+    MouseButton2 = Enum.UserInputType.MouseButton2,
+    MouseButton1 = Enum.UserInputType.MouseButton1,
+    LeftShift = Enum.KeyCode.LeftShift,
+    LeftControl = Enum.KeyCode.LeftControl,
+    Q = Enum.KeyCode.Q,
+    E = Enum.KeyCode.E,
+    R = Enum.KeyCode.R,
+    F = Enum.KeyCode.F,
+    C = Enum.KeyCode.C,
+    V = Enum.KeyCode.V,
+    X = Enum.KeyCode.X,
+    Z = Enum.KeyCode.Z
+}
+
+-- Обработка ввода
+inputService.InputBegan:Connect(function(input)
+    local selectedKey = keyBinds[aimbotSettings.TriggerKey]
+    
+    if selectedKey then
+        if (input.UserInputType == selectedKey and (aimbotSettings.TriggerKey == "MouseButton2" or aimbotSettings.TriggerKey == "MouseButton1")) or
+           (input.KeyCode == selectedKey and aimbotSettings.TriggerKey ~= "MouseButton2" and aimbotSettings.TriggerKey ~= "MouseButton1") then
+            aimbotSettings.AimKeyDown = true
+        end
+    end
+end)
+
+inputService.InputEnded:Connect(function(input)
+    local selectedKey = keyBinds[aimbotSettings.TriggerKey]
+    
+    if selectedKey then
+        if (input.UserInputType == selectedKey and (aimbotSettings.TriggerKey == "MouseButton2" or aimbotSettings.TriggerKey == "MouseButton1")) or
+           (input.KeyCode == selectedKey and aimbotSettings.TriggerKey ~= "MouseButton2" and aimbotSettings.TriggerKey ~= "MouseButton1") then
+            aimbotSettings.AimKeyDown = false
+        end
+    end
+end)
+
+-- Основной цикл Aim Bot с фиксом тряски
+runService.RenderStepped:Connect(function()
+    if aimbotSettings.Enabled and (aimbotSettings.AimKeyDown or aimbotSettings.ToggleMode) then
+        local closestPlayer = getClosestPlayer()
+        if closestPlayer and closestPlayer.Character then
+            local aimPart = closestPlayer.Character:FindFirstChild(aimbotSettings.AimPart)
+            if aimPart then
+                local targetPosition = aimPart.Position
+                
+                if aimbotSettings.UseMouse then
+                    -- Плавное прицеливание через мышь (фикс для третьего лица)
+                    local screenPos, onScreen = camera:WorldToScreenPoint(targetPosition)
+                    if onScreen then
+                        local mouse = game:GetService("Players").LocalPlayer:GetMouse()
+                        local smoothness = math.clamp(aimbotSettings.Smoothness, 0.1, 1)
+                        
+                        -- Плавное движение мыши к цели
+                        mousemoverel(
+                            (screenPos.X - mouse.X) * smoothness,
+                            (screenPos.Y - mouse.Y) * smoothness
+                        )
+                    end
+                else
+                    -- Плавное прицеливание через камеру
+                    local currentCFrame = camera.CFrame
+                    local targetCFrame = CFrame.new(currentCFrame.Position, targetPosition)
+                    
+                    local smoothness = math.clamp(aimbotSettings.Smoothness, 0.1, 1)
+                    camera.CFrame = currentCFrame:Lerp(targetCFrame, smoothness)
+                end
+            end
+        end
+    end
+end)
+
+-- ??? Вкладка ESP
+local ESPTab = Window:CreateTab("??? ESP", 0)
+local ESPSection = ESPTab:CreateSection("Professional 3D Box ESP")
+
+-- Настройки ESP
+local espSettings = {
+    Enabled = false,
+    Boxes = true,
+    Tracers = true,
+    TeamCheck = false,
+    Autothickness = false,
+    
+    -- Цвета
+    BoxColor = Color3.fromRGB(0, 255, 50),
+    TracerColor = Color3.fromRGB(0, 255, 50),
+    
+    -- Толщина
+    BoxThickness = 1.4,
+    TracerThickness = 1.4,
+    
+    -- Прозрачность
+    BoxTransparency = 1,
+    TracerTransparency = 1,
+    
+    -- Размер бокса
+    BoxSizeMultiplier = 1.0
+}
+
+-- Локальные переменные
+local workspace = game:GetService("Workspace")
+local players = game:GetService("Players")
+local localPlayer = players.LocalPlayer
+local camera = workspace.CurrentCamera
+local runService = game:GetService("RunService")
+
+-- Таблица для хранения ESP объектов
+local espObjects = {}
+
+-- Функция создания ESP для игрока
+local function createPlayerESP(player)
+    if espObjects[player] then return end
+    
+    espObjects[player] = {
+        line1 = Drawing.new("Line"),
+        line2 = Drawing.new("Line"),
+        line3 = Drawing.new("Line"),
+        line4 = Drawing.new("Line"),
+        line5 = Drawing.new("Line"),
+        line6 = Drawing.new("Line"),
+        line7 = Drawing.new("Line"),
+        line8 = Drawing.new("Line"),
+        line9 = Drawing.new("Line"),
+        line10 = Drawing.new("Line"),
+        line11 = Drawing.new("Line"),
+        line12 = Drawing.new("Line"),
+        Tracer = Drawing.new("Line")
+    }
+    
+    local lines = espObjects[player]
+    
+    -- Настройка всех линий
+    for _, line in pairs(lines) do
+        line.Visible = false
+        line.Thickness = espSettings.BoxThickness
+        line.Transparency = espSettings.BoxTransparency
+        line.Color = espSettings.BoxColor
+    end
+    
+    -- Настройка трассера отдельно
+    lines.Tracer.Color = espSettings.TracerColor
+    lines.Tracer.Thickness = espSettings.TracerThickness
+    lines.Tracer.Transparency = espSettings.TracerTransparency
+end
+
+-- Функция обновления ESP
+local function updatePlayerESP(player)
+    if not espSettings.Enabled or not espObjects[player] or not player.Character then 
+        return 
+    end
+    
+    local lines = espObjects[player]
+    local character = player.Character
+    
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    local head = character:FindFirstChild("Head")
+    
+    if not humanoid or not rootPart or not head or humanoid.Health <= 0 or player == localPlayer then
+        for _, line in pairs(lines) do
+            line.Visible = false
+        end
+        return
+    end
+    
+    -- Проверка команды
+    if espSettings.TeamCheck and player.Team == localPlayer.Team then
+        for _, line in pairs(lines) do
+            line.Color = Color3.fromRGB(88, 217, 24) -- зеленый для своей команды
+        end
+    else
+        for name, line in pairs(lines) do
+            if name ~= "Tracer" then
+                line.Color = espSettings.BoxColor
+            else
+                line.Color = espSettings.TracerColor
+            end
+        end
+    end
+    
+    local pos, vis = camera:WorldToViewportPoint(rootPart.Position)
+    
+    if vis then
+        local Scale = head.Size.Y / 2
+        local Size = Vector3.new(2, 3, 1.5) * (Scale * 2) * espSettings.BoxSizeMultiplier
+
+        -- Расчет позиций углов бокса
+        local Top1 = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(-Size.X, Size.Y, -Size.Z)).p)
+        local Top2 = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(-Size.X, Size.Y, Size.Z)).p)
+        local Top3 = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(Size.X, Size.Y, Size.Z)).p)
+        local Top4 = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(Size.X, Size.Y, -Size.Z)).p)
+
+        local Bottom1 = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(-Size.X, -Size.Y, -Size.Z)).p)
+        local Bottom2 = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(-Size.X, -Size.Y, Size.Z)).p)
+        local Bottom3 = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(Size.X, -Size.Y, Size.Z)).p)
+        local Bottom4 = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(Size.X, -Size.Y, -Size.Z)).p)
+
+        -- Top:
+        lines.line1.From = Vector2.new(Top1.X, Top1.Y)
+        lines.line1.To = Vector2.new(Top2.X, Top2.Y)
+
+        lines.line2.From = Vector2.new(Top2.X, Top2.Y)
+        lines.line2.To = Vector2.new(Top3.X, Top3.Y)
+
+        lines.line3.From = Vector2.new(Top3.X, Top3.Y)
+        lines.line3.To = Vector2.new(Top4.X, Top4.Y)
+
+        lines.line4.From = Vector2.new(Top4.X, Top4.Y)
+        lines.line4.To = Vector2.new(Top1.X, Top1.Y)
+
+        -- Bottom:
+        lines.line5.From = Vector2.new(Bottom1.X, Bottom1.Y)
+        lines.line5.To = Vector2.new(Bottom2.X, Bottom2.Y)
+
+        lines.line6.From = Vector2.new(Bottom2.X, Bottom2.Y)
+        lines.line6.To = Vector2.new(Bottom3.X, Bottom3.Y)
+
+        lines.line7.From = Vector2.new(Bottom3.X, Bottom3.Y)
+        lines.line7.To = Vector2.new(Bottom4.X, Bottom4.Y)
+
+        lines.line8.From = Vector2.new(Bottom4.X, Bottom4.Y)
+        lines.line8.To = Vector2.new(Bottom1.X, Bottom1.Y)
+
+        -- Sides:
+        lines.line9.From = Vector2.new(Bottom1.X, Bottom1.Y)
+        lines.line9.To = Vector2.new(Top1.X, Top1.Y)
+
+        lines.line10.From = Vector2.new(Bottom2.X, Bottom2.Y)
+        lines.line10.To = Vector2.new(Top2.X, Top2.Y)
+
+        lines.line11.From = Vector2.new(Bottom3.X, Bottom3.Y)
+        lines.line11.To = Vector2.new(Top3.X, Top3.Y)
+
+        lines.line12.From = Vector2.new(Bottom4.X, Bottom4.Y)
+        lines.line12.To = Vector2.new(Top4.X, Top4.Y)
+
+        -- Tracer:
+        if espSettings.Tracers then
+            local trace = camera:WorldToViewportPoint((rootPart.CFrame * CFrame.new(0, -Size.Y, 0)).p)
+            lines.Tracer.From = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
+            lines.Tracer.To = Vector2.new(trace.X, trace.Y)
+            lines.Tracer.Visible = true
+        else
+            lines.Tracer.Visible = false
+        end
+
+        -- Autothickness:
+        if espSettings.Autothickness then
+            local distance = (localPlayer.Character.HumanoidRootPart.Position - rootPart.Position).magnitude
+            local value = math.clamp(1/distance*100, 0.1, 4)
+            for _, line in pairs(lines) do
+                line.Thickness = value
+            end
+        else
+            for name, line in pairs(lines) do
+                if name ~= "Tracer" then
+                    line.Thickness = espSettings.BoxThickness
+                else
+                    line.Thickness = espSettings.TracerThickness
+                end
+            end
+        end
+
+        -- Видимость боксов
+        if espSettings.Boxes then
+            for name, line in pairs(lines) do
+                if name ~= "Tracer" then
+                    line.Visible = true
+                end
+            end
+        else
+            for name, line in pairs(lines) do
+                if name ~= "Tracer" then
+                    line.Visible = false
+                end
+            end
+        end
+    else
+        for _, line in pairs(lines) do
+            line.Visible = false
+        end
+    end
+end
+
+-- Функция очистки ESP игрока
+local function clearPlayerESP(player)
+    if espObjects[player] then
+        for _, line in pairs(espObjects[player]) do
+            pcall(function()
+                line:Remove()
+            end)
+        end
+        espObjects[player] = nil
+    end
+end
+
+-- Функция очистки всего ESP
+local function clearAllESP()
+    for player, _ in pairs(espObjects) do
+        clearPlayerESP(player)
+    end
+end
+
+-- Элементы управления в интерфейсе
+local ESPEnabledToggle = ESPTab:CreateToggle({
+   Name = "Включить 3D Box ESP",
+   CurrentValue = espSettings.Enabled,
+   Callback = function(Value)
+      espSettings.Enabled = Value
+      if not Value then
+          clearAllESP()
+      else
+          -- Инициализация ESP для всех игроков
+          for _, player in ipairs(players:GetPlayers()) do
+              if player ~= localPlayer then
+                  createPlayerESP(player)
+              end
+          end
+      end
+      Rayfield:Notify({
+         Title = "??? ESP",
+         Content = Value and "3D Box ESP активирован!" or "ESP деактивирован!",
+         Duration = 3,
+      })
+   end,
+})
+
+local BoxesToggle = ESPTab:CreateToggle({
+   Name = "Показывать 3D Boxes",
+   CurrentValue = espSettings.Boxes,
+   Callback = function(Value)
+      espSettings.Boxes = Value
+   end,
+})
+
+local TracersToggle = ESPTab:CreateToggle({
+   Name = "Показывать Tracers",
+   CurrentValue = espSettings.Tracers,
+   Callback = function(Value)
+      espSettings.Tracers = Value
+   end,
+})
+
+local TeamCheckToggle = ESPTab:CreateToggle({
+   Name = "Проверка команды",
+   CurrentValue = espSettings.TeamCheck,
+   Callback = function(Value)
+      espSettings.TeamCheck = Value
+   end,
+})
+
+local AutothicknessToggle = ESPTab:CreateToggle({
+   Name = "Авто толщина линий",
+   CurrentValue = espSettings.Autothickness,
+   Callback = function(Value)
+      espSettings.Autothickness = Value
+   end,
+})
+
+local BoxThicknessSlider = ESPTab:CreateSlider({
+   Name = "Толщина боксов",
+   Range = {0.5, 5},
+   Increment = 0.1,
+   Suffix = "px",
+   CurrentValue = espSettings.BoxThickness,
+   Callback = function(Value)
+      espSettings.BoxThickness = Value
+      for _, playerLines in pairs(espObjects) do
+          for name, line in pairs(playerLines) do
+              if name ~= "Tracer" then
+                  line.Thickness = Value
+              end
+          end
+      end
+   end,
+})
+
+local TracerThicknessSlider = ESPTab:CreateSlider({
+   Name = "Толщина трассеров",
+   Range = {0.5, 5},
+   Increment = 0.1,
+   Suffix = "px",
+   CurrentValue = espSettings.TracerThickness,
+   Callback = function(Value)
+      espSettings.TracerThickness = Value
+      for _, playerLines in pairs(espObjects) do
+          if playerLines.Tracer then
+              playerLines.Tracer.Thickness = Value
+          end
+      end
+   end,
+})
+
+local BoxSizeSlider = ESPTab:CreateSlider({
+   Name = "Размер боксов",
+   Range = {0.5, 2},
+   Increment = 0.1,
+   Suffix = "x",
+   CurrentValue = espSettings.BoxSizeMultiplier,
+   Callback = function(Value)
+      espSettings.BoxSizeMultiplier = Value
+   end,
+})
+
+local BoxTransparencySlider = ESPTab:CreateSlider({
+   Name = "Прозрачность боксов",
+   Range = {0, 1},
+   Increment = 0.1,
+   Suffix = "",
+   CurrentValue = espSettings.BoxTransparency,
+   Callback = function(Value)
+      espSettings.BoxTransparency = Value
+      for _, playerLines in pairs(espObjects) do
+          for name, line in pairs(playerLines) do
+              if name ~= "Tracer" then
+                  line.Transparency = Value
+              end
+          end
+      end
+   end,
+})
+
+local TracerTransparencySlider = ESPTab:CreateSlider({
+   Name = "Прозрачность трассеров",
+   Range = {0, 1},
+   Increment = 0.1,
+   Suffix = "",
+   CurrentValue = espSettings.TracerTransparency,
+   Callback = function(Value)
+      espSettings.TracerTransparency = Value
+      for _, playerLines in pairs(espObjects) do
+          if playerLines.Tracer then
+              playerLines.Tracer.Transparency = Value
+          end
+      end
+   end,
+})
+
+local BoxColorPicker = ESPTab:CreateColorPicker({
+   Name = "Цвет боксов",
+   Color = espSettings.BoxColor,
+   Callback = function(Value)
+      espSettings.BoxColor = Value
+      for _, playerLines in pairs(espObjects) do
+          for name, line in pairs(playerLines) do
+              if name ~= "Tracer" then
+                  line.Color = Value
+              end
+          end
+      end
+   end,
+})
+
+local TracerColorPicker = ESPTab:CreateColorPicker({
+   Name = "Цвет трассеров",
+   Color = espSettings.TracerColor,
+   Callback = function(Value)
+      espSettings.TracerColor = Value
+      for _, playerLines in pairs(espObjects) do
+          if playerLines.Tracer then
+              playerLines.Tracer.Color = Value
+          end
+      end
+   end,
+})
+
+-- Основной цикл ESP
+local espLoop
+espLoop = runService.RenderStepped:Connect(function()
+    if not espSettings.Enabled then 
+        if espLoop then
+            espLoop:Disconnect()
+            espLoop = nil
+        end
+        return 
+    end
+    
+    for _, player in ipairs(players:GetPlayers()) do
+        if player ~= localPlayer then
+            if not espObjects[player] then
+                createPlayerESP(player)
+            end
+            updatePlayerESP(player)
+        end
+    end
+end)
+
+-- Очистка при выходе игрока
+players.PlayerRemoving:Connect(function(playerLeft)
+    clearPlayerESP(playerLeft)
+end)
+
+-- Инициализация для новых игроков
+players.PlayerAdded:Connect(function(newPlayer)
+    if espSettings.Enabled then
+        createPlayerESP(newPlayer)
+    end
+end)
+-- ?? Вкладка Убить Всех
+local KillAllTab = Window:CreateTab("?? Убить Всех", 0)
+local KillAllSection = KillAllTab:CreateSection("Safe Zone Kill All")
+
+local player = game:GetService("Players").LocalPlayer
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local safeZoneRadius = 20
+local isActive = false
+local killAllEnabled = true
+local ignoreFriends = true
+
+local SafeZoneToggle = KillAllTab:CreateToggle({
+   Name = "Включить Safe Zone",
+   CurrentValue = isActive,
+   Callback = function(Value)
+      isActive = Value
+      if Value then
+         Rayfield:Notify({
+            Title = "??? Safe Zone",
+            Content = "Безопасная зона активирована!",
+            Duration = 3,
+         })
+      else
+         Rayfield:Notify({
+            Title = "??? Safe Zone",
+            Content = "Безопасная зона деактивирована!",
+            Duration = 3,
+         })
+      end
+   end,
+})
+
+local KillAllToggle = KillAllTab:CreateToggle({
+   Name = "Режим Kill All (Атаковать всех)",
+   CurrentValue = killAllEnabled,
+   Callback = function(Value)
+      killAllEnabled = Value
+      if Value then
+         Rayfield:Notify({
+            Title = "?? Kill All",
+            Content = "Режим убийства всех включен!",
+            Duration = 3,
+         })
+      else
+         Rayfield:Notify({
+            Title = "?? Kill All",
+            Content = "Режим убийства всех выключен!",
+            Duration = 3,
+         })
+      end
+   end,
+})
+
+local RadiusSlider = KillAllTab:CreateSlider({
+   Name = "Радиус безопасной зоны",
+   Range = {5, 100},
+   Increment = 1,
+   Suffix = "studs",
+   CurrentValue = safeZoneRadius,
+   Callback = function(Value)
+      safeZoneRadius = Value
+   end,
+})
+
+local FriendToggle = KillAllTab:CreateToggle({
+   Name = "Игнорировать друзей",
+   CurrentValue = ignoreFriends,
+   Callback = function(Value)
+      ignoreFriends = Value
+   end,
+})
+
+-- Safe Zone Visual
+local zonePart = Instance.new("Part")
+zonePart.Shape = Enum.PartType.Ball
+zonePart.Anchored = true
+zonePart.CanCollide = false
+zonePart.Transparency = 0.6
+zonePart.Color = Color3.fromRGB(0, 255, 0)
+zonePart.Material = Enum.Material.ForceField
+zonePart.Name = "SafeZone"
+zonePart.Parent = workspace
+
+local function isFriendWith(p1, p2)
+   return p1:IsFriendsWith(p2.UserId)
+end
+
+RunService.RenderStepped:Connect(function()
+   local myChar = player.Character
+   if not myChar or not myChar:FindFirstChild("HumanoidRootPart") then return end
+   
+   local root = myChar.HumanoidRootPart
+   zonePart.Position = root.Position
+   zonePart.Size = Vector3.new(safeZoneRadius * 2, safeZoneRadius * 2, safeZoneRadius * 2)
+   
+   if not isActive then return end
+   
+   local tool = myChar:FindFirstChildOfClass("Tool")
+   if not tool or not tool:FindFirstChild("Handle") then return end
+   
+   for _, other in ipairs(Players:GetPlayers()) do
+      if other ~= player and other.Character and other.Character:FindFirstChild("HumanoidRootPart") then
+         local oRoot = other.Character.HumanoidRootPart
+         local dist = (oRoot.Position - root.Position).Magnitude
+         
+         local shouldAttack = killAllEnabled or (dist > safeZoneRadius)
+         local isFriend = ignoreFriends and isFriendWith(player, other)
+         
+         if shouldAttack and not isFriend and dist <= 1000 then
+            tool:Activate()
+            for _, part in pairs(other.Character:GetChildren()) do
+               if part:IsA("BasePart") then
+                  firetouchinterest(tool.Handle, part, 0)
+                  firetouchinterest(tool.Handle, part, 1)
+               end
+            end
+         end
+      end
+   end
+end)
+
+Rayfield:Notify({
+   Title = "?? FE Script Hub загружен!",
+   Content = "Выберите скрипт и нажмите кнопку!",
+   Duration = 5,
+})
