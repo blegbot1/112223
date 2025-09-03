@@ -55,6 +55,19 @@ local TelekinesisBtn = ScriptsTab:CreateButton({
    end,
 })
 
+-- 🚗 FE Car Script (добавлен новый скрипт)
+local FECarBtn = ScriptsTab:CreateButton({
+   Name = "🚗 FE Car Script | FE",
+   Callback = function()
+      loadstring(game:HttpGet("https://raw.githubusercontent.com/AstraOutlight/my-scripts/refs/heads/main/fe%20car%20v3"))()
+      Rayfield:Notify({
+         Title = "✅ Успех!",
+         Content = "FE Car скрипт активирован!",
+         Duration = 3,
+      })
+   end,
+})
+
 -- 🦘 Бесконечные прыжки
 local InfiniteJumpBtn = ScriptsTab:CreateButton({
    Name = "🦘 Infinite Jump | FE",
@@ -186,7 +199,8 @@ local aimbotSettings = {
     ToggleMode = false,
     UseMouse = true,
     FOVCircle = false,
-    FOVColor = Color3.fromRGB(255, 255, 255)
+    FOVColor = Color3.fromRGB(255, 255, 255),
+    MaxDistance = 1000
 }
 
 local camera = workspace.CurrentCamera
@@ -240,6 +254,17 @@ local FOVSlider = AimBotTab:CreateSlider({
    Callback = function(Value)
       aimbotSettings.FOV = Value
       fovCircle.Radius = Value
+   end,
+})
+
+local MaxDistanceSlider = AimBotTab:CreateSlider({
+   Name = "Макс. дистанция",
+   Range = {100, 5000},
+   Increment = 100,
+   Suffix = "studs",
+   CurrentValue = aimbotSettings.MaxDistance,
+   Callback = function(Value)
+      aimbotSettings.MaxDistance = Value
    end,
 })
 
@@ -354,10 +379,15 @@ local function getClosestPlayer()
                     local screenPos, onScreen = camera:WorldToViewportPoint(aimPart.Position)
                     
                     if onScreen then
-                        local distance = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                        local distance = (localPlayer.Character.HumanoidRootPart.Position - aimPart.Position).Magnitude
+                        if distance > aimbotSettings.MaxDistance then
+                            continue
+                        end
                         
-                        if distance < closestDistance then
-                            closestDistance = distance
+                        local mouseDistance = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
+                        
+                        if mouseDistance < closestDistance then
+                            closestDistance = mouseDistance
                             closestPlayer = player
                         end
                     end
@@ -426,15 +456,15 @@ local visualsSettings = {
     TextSize = 14,
     
     Box2DWidth = 50,
-    Box2DHeight = 80,
+    Box2DHeight = 100,
     Box3DSize = 2.0,
     TracerFromPosition = "Bottom",
     
     Box2DVerticalOffset = 0,
     Box2DHorizontalOffset = 0,
-    NameVerticalOffset = -80,
-    HealthVerticalOffset = -60,
-    DistanceVerticalOffset = -40
+    NameVerticalOffset = -120,
+    HealthVerticalOffset = -100,
+    DistanceVerticalOffset = -80
 }
 
 local visualsObjects = {}
@@ -563,7 +593,8 @@ local function updateVisuals(player)
         return
     end
     
-    local distance = (rootPart.Position - (localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart") and localPlayer.Character.HumanoidRootPart.Position or Vector3.new())).Magnitude
+    local localRoot = localPlayer.Character and localPlayer.Character:FindFirstChild("HumanoidRootPart")
+    local distance = localRoot and (rootPart.Position - localRoot.Position).Magnitude or 0
     if distance > visualsSettings.MaxDistance then
         for _, obj in pairs(visualsObjects[player]) do
             if type(obj) == "table" then
@@ -618,25 +649,25 @@ local function updateVisuals(player)
         end
     end
     
-    -- 2D Box
+    -- 2D Box (правильный размер под полный рост)
     if visualsSettings.Box2D then
         local rootScreenPos = camera:WorldToViewportPoint(rootPart.Position)
         local headScreenPos = camera:WorldToViewportPoint(head.Position)
         
-        local height = math.abs(headScreenPos.Y - rootScreenPos.Y) * 2.2
-        local width = height * 0.6
+        local height = math.abs(headScreenPos.Y - rootScreenPos.Y) * 2.5
+        local width = height * 0.5
         
         visualsObjects[player].Box2D.Size = Vector2.new(width, height)
         visualsObjects[player].Box2D.Position = Vector2.new(
             rootScreenPos.X - width/2 + visualsSettings.Box2DHorizontalOffset,
-            rootScreenPos.Y - height + visualsSettings.Box2DVerticalOffset
+            rootScreenPos.Y - height/2 + visualsSettings.Box2DVerticalOffset
         )
         visualsObjects[player].Box2D.Visible = true
     else
         visualsObjects[player].Box2D.Visible = false
     end
     
-    -- Tracer
+    -- Tracer (исправленное обновление позиции)
     if visualsSettings.Tracers then
         local rootScreenPos = camera:WorldToViewportPoint(rootPart.Position)
         
@@ -820,7 +851,7 @@ local Box2DHeightSlider = VisualsTab:CreateSlider({
    Suffix = "x",
    CurrentValue = 1,
    Callback = function(Value)
-      visualsSettings.Box2DHeight = 80 * Value
+      visualsSettings.Box2DHeight = 100 * Value
    end,
 })
 
@@ -973,7 +1004,7 @@ local DistanceColorPicker = VisualsTab:CreateColorPicker({
    end,
 })
 
--- Основной цикл Visuals
+-- Основной цикл Visuals (максимальная производительность)
 task.spawn(function()
     while true do
         if visualsSettings.Enabled then
@@ -992,12 +1023,33 @@ task.spawn(function()
     end
 end)
 
--- Очистка ESP при смерти игрока
-local function onCharacterAdded(character)
+-- Автоматическое обновление ESP при возрождении игроков
+players.PlayerAdded:Connect(function(player)
+    if visualsSettings.Enabled then
+        createVisuals(player)
+        
+        player.CharacterAdded:Connect(function(character)
+            character:WaitForChild("Humanoid").Died:Connect(function()
+                if visualsSettings.Enabled then
+                    clearVisuals(player)
+                    task.wait(0.1)
+                    createVisuals(player)
+                end
+            end)
+        end)
+    end
+end)
+
+players.PlayerRemoving:Connect(function(player)
+    clearVisuals(player)
+end)
+
+-- Очистка ESP при смерти локального игрока
+localPlayer.CharacterAdded:Connect(function(character)
     character:WaitForChild("Humanoid").Died:Connect(function()
         if visualsSettings.Enabled then
             clearAllVisuals()
-            -- Пересоздаем ESP для всех игроков
+            task.wait(0.1)
             for _, player in ipairs(players:GetPlayers()) do
                 if player ~= localPlayer then
                     createVisuals(player)
@@ -1005,22 +1057,6 @@ local function onCharacterAdded(character)
             end
         end
     end)
-end
-
-if localPlayer.Character then
-    onCharacterAdded(localPlayer.Character)
-end
-
-localPlayer.CharacterAdded:Connect(onCharacterAdded)
-
-players.PlayerRemoving:Connect(function(player)
-    clearVisuals(player)
-end)
-
-players.PlayerAdded:Connect(function(player)
-    if visualsSettings.Enabled then
-        createVisuals(player)
-    end
 end)
 
 -- ⚔️ Вкладка Убить Всех
