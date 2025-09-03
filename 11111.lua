@@ -133,7 +133,7 @@ local AutoFarmBtn = ScriptsTab:CreateButton({
    end,
 })
 
--- 🔫 Gun Mods (ИСПРАВЛЕННАЯ ФУНКЦИЯ)
+-- 🔫 Gun Mods
 local GunModsBtn = ScriptsTab:CreateButton({
    Name = "🔫 Gun Mods | FE",
    Callback = function()
@@ -441,7 +441,15 @@ local visualsSettings = {
     Box2DWidth = 50,
     Box2DHeight = 80,
     Box3DSize = 2.0,
-    TracerFrom = "Bottom"
+    TracerFrom = "Bottom",
+    
+    -- Новые настройки позиционирования
+    Box2DVerticalOffset = 0,
+    Box2DHorizontalOffset = 0,
+    NameVerticalOffset = -80,
+    HealthVerticalOffset = -60,
+    DistanceVerticalOffset = -40,
+    TracerFromPosition = "Bottom"
 }
 
 local visualsObjects = {}
@@ -531,22 +539,30 @@ local function updateVisuals(player)
         if type(obj) == "table" then
             for _, line in pairs(obj) do
                 line.Color = teamColor
+                line.Thickness = visualsSettings.BoxThickness
             end
         elseif obj == visualsObjects[player].Tracer then
             obj.Color = visualsSettings.TracerColor
+            obj.Thickness = visualsSettings.TracerThickness
         elseif obj == visualsObjects[player].Name then
             obj.Color = visualsSettings.NameColor
+            obj.Size = visualsSettings.TextSize
         elseif obj == visualsObjects[player].Health then
             obj.Color = visualsSettings.HealthColor
+            obj.Size = visualsSettings.TextSize
         elseif obj == visualsObjects[player].Distance then
             obj.Color = visualsSettings.DistanceColor
+            obj.Size = visualsSettings.TextSize
         else
             obj.Color = teamColor
+            obj.Thickness = visualsSettings.BoxThickness
         end
     end
     
-    local pos, vis = camera:WorldToViewportPoint(rootPart.Position)
-    if not vis then
+    local rootPos, rootVis = camera:WorldToViewportPoint(rootPart.Position)
+    local headPos, headVis = camera:WorldToViewportPoint(head.Position)
+    
+    if not rootVis or not headVis then
         for _, obj in pairs(visualsObjects[player]) do
             if type(obj) == "table" then
                 for _, line in pairs(obj) do
@@ -600,9 +616,13 @@ local function updateVisuals(player)
         
         for i, conn in ipairs(connections) do
             local line = visualsObjects[player].Box3D[i]
-            line.From = Vector2.new(screenPoints[conn[1]].X, screenPoints[conn[1]].Y)
-            line.To = Vector2.new(screenPoints[conn[2]].X, screenPoints[conn[2]].Y)
-            line.Visible = true
+            if screenPoints[conn[1]] and screenPoints[conn[2]] then
+                line.From = Vector2.new(screenPoints[conn[1]].X, screenPoints[conn[1]].Y)
+                line.To = Vector2.new(screenPoints[conn[2]].X, screenPoints[conn[2]].Y)
+                line.Visible = true
+            else
+                line.Visible = false
+            end
         end
     else
         for _, line in pairs(visualsObjects[player].Box3D) do
@@ -610,21 +630,42 @@ local function updateVisuals(player)
         end
     end
     
-    -- 2D Box
+    -- 2D Box (правильное позиционирование вокруг игрока)
     if visualsSettings.Box2D then
-        local headPos = camera:WorldToViewportPoint(head.Position)
-        visualsObjects[player].Box2D.Size = Vector2.new(visualsSettings.Box2DWidth, visualsSettings.Box2DHeight)
-        visualsObjects[player].Box2D.Position = Vector2.new(headPos.X - visualsSettings.Box2DWidth/2, headPos.Y - visualsSettings.Box2DHeight)
+        local rootScreenPos = camera:WorldToViewportPoint(rootPart.Position)
+        local headScreenPos = camera:WorldToViewportPoint(head.Position)
+        
+        local height = math.abs(headScreenPos.Y - rootScreenPos.Y) * 2
+        local width = height / 2
+        
+        visualsObjects[player].Box2D.Size = Vector2.new(
+            visualsSettings.Box2DWidth + width / 2,
+            visualsSettings.Box2DHeight + height / 2
+        )
+        
+        visualsObjects[player].Box2D.Position = Vector2.new(
+            rootScreenPos.X - visualsSettings.Box2DWidth/2 + visualsSettings.Box2DHorizontalOffset,
+            rootScreenPos.Y - height + visualsSettings.Box2DVerticalOffset
+        )
         visualsObjects[player].Box2D.Visible = true
     else
         visualsObjects[player].Box2D.Visible = false
     end
     
-    -- Tracer
+    -- Tracer (исправленная работа)
     if visualsSettings.Tracers then
         local rootScreenPos = camera:WorldToViewportPoint(rootPart.Position)
-        local fromY = visualsSettings.TracerFrom == "Bottom" and camera.ViewportSize.Y or 0
-        visualsObjects[player].Tracer.From = Vector2.new(camera.ViewportSize.X/2, fromY)
+        
+        local fromPosition
+        if visualsSettings.TracerFromPosition == "Bottom" then
+            fromPosition = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
+        elseif visualsSettings.TracerFromPosition == "Top" then
+            fromPosition = Vector2.new(camera.ViewportSize.X/2, 0)
+        else -- Middle
+            fromPosition = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2)
+        end
+        
+        visualsObjects[player].Tracer.From = fromPosition
         visualsObjects[player].Tracer.To = Vector2.new(rootScreenPos.X, rootScreenPos.Y)
         visualsObjects[player].Tracer.Visible = true
     else
@@ -633,9 +674,12 @@ local function updateVisuals(player)
     
     -- Name
     if visualsSettings.Names then
-        local headPos = camera:WorldToViewportPoint(head.Position)
+        local headScreenPos = camera:WorldToViewportPoint(head.Position)
         visualsObjects[player].Name.Text = player.Name
-        visualsObjects[player].Name.Position = Vector2.new(headPos.X, headPos.Y - visualsSettings.Box2DHeight - 20)
+        visualsObjects[player].Name.Position = Vector2.new(
+            headScreenPos.X,
+            headScreenPos.Y + visualsSettings.NameVerticalOffset
+        )
         visualsObjects[player].Name.Visible = true
     else
         visualsObjects[player].Name.Visible = false
@@ -643,9 +687,12 @@ local function updateVisuals(player)
     
     -- Health
     if visualsSettings.Health then
-        local headPos = camera:WorldToViewportPoint(head.Position)
+        local headScreenPos = camera:WorldToViewportPoint(head.Position)
         visualsObjects[player].Health.Text = "HP: " .. math.floor(humanoid.Health)
-        visualsObjects[player].Health.Position = Vector2.new(headPos.X, headPos.Y - visualsSettings.Box2DHeight - 40)
+        visualsObjects[player].Health.Position = Vector2.new(
+            headScreenPos.X,
+            headScreenPos.Y + visualsSettings.HealthVerticalOffset
+        )
         visualsObjects[player].Health.Visible = true
     else
         visualsObjects[player].Health.Visible = false
@@ -653,9 +700,12 @@ local function updateVisuals(player)
     
     -- Distance
     if visualsSettings.Distance then
-        local headPos = camera:WorldToViewportPoint(head.Position)
+        local headScreenPos = camera:WorldToViewportPoint(head.Position)
         visualsObjects[player].Distance.Text = math.floor(distance) .. " studs"
-        visualsObjects[player].Distance.Position = Vector2.new(headPos.X, headPos.Y - visualsSettings.Box2DHeight - 60)
+        visualsObjects[player].Distance.Position = Vector2.new(
+            headScreenPos.X,
+            headScreenPos.Y + visualsSettings.DistanceVerticalOffset
+        )
         visualsObjects[player].Distance.Visible = true
     else
         visualsObjects[player].Distance.Visible = false
@@ -768,9 +818,10 @@ local MaxDistanceSlider = VisualsTab:CreateSlider({
    end,
 })
 
+-- Новые настройки позиционирования
 local Box2DWidthSlider = VisualsTab:CreateSlider({
    Name = "2D Box Width",
-   Range = {30, 150},
+   Range = {20, 200},
    Increment = 5,
    Suffix = "px",
    CurrentValue = visualsSettings.Box2DWidth,
@@ -781,12 +832,67 @@ local Box2DWidthSlider = VisualsTab:CreateSlider({
 
 local Box2DHeightSlider = VisualsTab:CreateSlider({
    Name = "2D Box Height",
-   Range = {50, 200},
+   Range = {40, 300},
    Increment = 5,
    Suffix = "px",
    CurrentValue = visualsSettings.Box2DHeight,
    Callback = function(Value)
       visualsSettings.Box2DHeight = Value
+   end,
+})
+
+local Box2DVerticalOffsetSlider = VisualsTab:CreateSlider({
+   Name = "2D Box Vertical Offset",
+   Range = {-100, 100},
+   Increment = 5,
+   Suffix = "px",
+   CurrentValue = visualsSettings.Box2DVerticalOffset,
+   Callback = function(Value)
+      visualsSettings.Box2DVerticalOffset = Value
+   end,
+})
+
+local Box2DHorizontalOffsetSlider = VisualsTab:CreateSlider({
+   Name = "2D Box Horizontal Offset",
+   Range = {-100, 100},
+   Increment = 5,
+   Suffix = "px",
+   CurrentValue = visualsSettings.Box2DHorizontalOffset,
+   Callback = function(Value)
+      visualsSettings.Box2DHorizontalOffset = Value
+   end,
+})
+
+local NameVerticalOffsetSlider = VisualsTab:CreateSlider({
+   Name = "Name Vertical Offset",
+   Range = {-150, 150},
+   Increment = 5,
+   Suffix = "px",
+   CurrentValue = visualsSettings.NameVerticalOffset,
+   Callback = function(Value)
+      visualsSettings.NameVerticalOffset = Value
+   end,
+})
+
+local HealthVerticalOffsetSlider = VisualsTab:CreateSlider({
+   Name = "Health Vertical Offset",
+   Range = {-150, 150},
+   Increment = 5,
+   Suffix = "px",
+   CurrentValue = visualsSettings.HealthVerticalOffset,
+   Callback = function(Value)
+      visualsSettings.HealthVerticalOffset = Value
+   end,
+})
+
+local DistanceVerticalOffsetSlider = VisualsTab:CreateSlider({
+   Name = "Distance Vertical Offset",
+   Range = {-150, 150},
+   Increment = 5,
+   Suffix = "px",
+   CurrentValue = visualsSettings.DistanceVerticalOffset,
+   Callback = function(Value)
+      visualsSettings.DistanceVerticalOffset = Value
    end,
 })
 
@@ -803,71 +909,47 @@ local Box3DSizeSlider = VisualsTab:CreateSlider({
 
 local BoxThicknessSlider = VisualsTab:CreateSlider({
    Name = "Box Thickness",
-   Range = {1, 5},
+   Range = {1, 10},
    Increment = 1,
    Suffix = "px",
    CurrentValue = visualsSettings.BoxThickness,
    Callback = function(Value)
       visualsSettings.BoxThickness = Value
-      for _, playerLines in pairs(visualsObjects) do
-          for name, line in pairs(playerLines) do
-              if type(line) == "table" or name == "Box2D" then
-                  if type(line) == "table" then
-                      for _, l in pairs(line) do
-                          l.Thickness = Value
-                      end
-                  else
-                      line.Thickness = Value
-                  end
-              end
-          end
-      end
    end,
 })
 
 local TracerThicknessSlider = VisualsTab:CreateSlider({
    Name = "Tracer Thickness",
-   Range = {1, 5},
+   Range = {1, 10},
    Increment = 1,
    Suffix = "px",
    CurrentValue = visualsSettings.TracerThickness,
    Callback = function(Value)
       visualsSettings.TracerThickness = Value
-      for _, playerLines in pairs(visualsObjects) do
-          if playerLines.Tracer then
-              playerLines.Tracer.Thickness = Value
-          end
-      end
    end,
 })
 
 local TextSizeSlider = VisualsTab:CreateSlider({
    Name = "Text Size",
-   Range = {10, 20},
+   Range = {8, 24},
    Increment = 1,
    Suffix = "px",
    CurrentValue = visualsSettings.TextSize,
    Callback = function(Value)
       visualsSettings.TextSize = Value
-      for _, playerLines in pairs(visualsObjects) do
-          for name, text in pairs(playerLines) do
-              if name == "Name" or name == "Health" or name == "Distance" then
-                  text.Size = Value
-              end
-          end
-      end
    end,
 })
 
 local TracerFromDropdown = VisualsTab:CreateDropdown({
-   Name = "Tracer From",
+   Name = "Tracer From Position",
    Options = {"Bottom", "Top", "Middle"},
-   CurrentOption = visualsSettings.TracerFrom,
+   CurrentOption = visualsSettings.TracerFromPosition,
    Callback = function(Option)
-      visualsSettings.TracerFrom = Option
+      visualsSettings.TracerFromPosition = Option
    end,
 })
 
+-- Цветовые пикеры
 local BoxColorPicker = VisualsTab:CreateColorPicker({
    Name = "Box Color",
    Color = visualsSettings.BoxColor,
