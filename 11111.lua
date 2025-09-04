@@ -9,6 +9,44 @@ local Window = Rayfield:CreateWindow({
       FolderName = "FEScriptHub",
       FileName = "UserConfig"
    },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+   Theme = {
+      TextColor = Color3.fromRGB(240, 240, 240),
+      Background = Color3.fromRGB(25, 25, 25),
+      Topbar = Color3.fromRGB(34, 34, 34),
+      Shadow = Color3.fromRGB(20, 20, 20),
+      NotificationBackground = Color3.fromRGB(20, 20, 20),
+      NotificationActionsBackground = Color3.fromRGB(230, 230, 230),
+      TabBackground = Color3.fromRGB(80, 80, 80),
+      TabStroke = Color3.fromRGB(85, 85, 85),
+      TabBackgroundSelected = Color3.fromRGB(210, 210, 210),
+      TabTextColor = Color3.fromRGB(240, 240, 240),
+      SelectedTabTextColor = Color3.fromRGB(50, 50, 50),
+      ElementBackground = Color3.fromRGB(35, 35, 35),
+      ElementBackgroundHover = Color3.fromRGB(40, 40, 40),
+      SecondaryElementBackground = Color3.fromRGB(25, 25, 25),
+      ElementStroke = Color3.fromRGB(50, 50, 50),
+      SecondaryElementStroke = Color3.fromRGB(40, 40, 40),
+      SliderBackground = Color3.fromRGB(50, 138, 220),
+      SliderProgress = Color3.fromRGB(50, 138, 220),
+      SliderStroke = Color3.fromRGB(58, 163, 255),
+      ToggleBackground = Color3.fromRGB(30, 30, 30),
+      ToggleEnabled = Color3.fromRGB(0, 146, 214),
+      ToggleDisabled = Color3.fromRGB(100, 100, 100),
+      ToggleEnabledStroke = Color3.fromRGB(0, 170, 255),
+      ToggleDisabledStroke = Color3.fromRGB(125, 125, 125),
+      ToggleEnabledOuterStroke = Color3.fromRGB(100, 100, 100),
+      ToggleDisabledOuterStroke = Color3.fromRGB(65, 65, 65),
+      DropdownSelected = Color3.fromRGB(40, 40, 40),
+      DropdownUnselected = Color3.fromRGB(30, 30, 30),
+      InputBackground = Color3.fromRGB(30, 30, 30),
+      InputStroke = Color3.fromRGB(65, 65, 65),
+      PlaceholderColor = Color3.fromRGB(178, 178, 178)
+   }
 })
 
 -- 📜 Вкладка со скриптами
@@ -183,11 +221,13 @@ local aimbotSettings = {
     FOV = 120,
     AimPart = "Head",
     TriggerKey = "MouseButton2",
-    ToggleMode = false,
     UseMouse = true,
     FOVCircle = false,
     FOVColor = Color3.fromRGB(255, 255, 255),
-    FOVThickness = 2
+    FOVThickness = 2,
+    
+    -- Новые настройки для переключения режима
+    ToggleState = false
 }
 
 local camera = workspace.CurrentCamera
@@ -204,12 +244,34 @@ fovCircle.Color = aimbotSettings.FOVColor
 fovCircle.Thickness = aimbotSettings.FOVThickness
 fovCircle.Position = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2)
 
+-- Переменная для отслеживания состояния
+local aimbotActive = false
+
+-- Keybind для переключения режима на Q
+local ToggleKeybind = AimBotTab:CreateKeybind({
+   Name = "Включить/Выключить (Q)",
+   CurrentKeybind = "Q",
+   HoldToInteract = false,
+   Flag = "AimBotToggleKey",
+   Callback = function()
+       aimbotSettings.ToggleState = not aimbotSettings.ToggleState
+       Rayfield:Notify({
+           Title = "🎯 Aim Bot",
+           Content = aimbotSettings.ToggleState and "Включен - используй RightClick" or "Выключен",
+           Duration = 2,
+       })
+   end,
+})
+
 local AimEnabledToggle = AimBotTab:CreateToggle({
-   Name = "Включить Aim Bot",
+   Name = "Активировать Aim Bot",
    CurrentValue = aimbotSettings.Enabled,
    Callback = function(Value)
       aimbotSettings.Enabled = Value
       fovCircle.Visible = Value and aimbotSettings.FOVCircle
+      if not Value then
+          aimbotSettings.ToggleState = false
+      end
    end,
 })
 
@@ -283,23 +345,6 @@ local AimPartDropdown = AimBotTab:CreateDropdown({
    end,
 })
 
-local TriggerKeyDropdown = AimBotTab:CreateDropdown({
-   Name = "Клавиша активации",
-   Options = {"MouseButton2", "MouseButton1", "LeftShift", "LeftControl", "Q", "E", "R", "F", "C", "V", "X", "Z"},
-   CurrentOption = aimbotSettings.TriggerKey,
-   Callback = function(Option)
-      aimbotSettings.TriggerKey = Option
-   end,
-})
-
-local ToggleModeToggle = AimBotTab:CreateToggle({
-   Name = "Режим переключения",
-   CurrentValue = aimbotSettings.ToggleMode,
-   Callback = function(Value)
-      aimbotSettings.ToggleMode = Value
-   end,
-})
-
 local MouseAimToggle = AimBotTab:CreateToggle({
    Name = "Использовать мышь",
    CurrentValue = aimbotSettings.UseMouse,
@@ -308,40 +353,16 @@ local MouseAimToggle = AimBotTab:CreateToggle({
    end,
 })
 
-local keyBinds = {
-    MouseButton2 = Enum.UserInputType.MouseButton2,
-    MouseButton1 = Enum.UserInputType.MouseButton1,
-    LeftShift = Enum.KeyCode.LeftShift,
-    LeftControl = Enum.KeyCode.LeftControl,
-    Q = Enum.KeyCode.Q,
-    E = Enum.KeyCode.E,
-    R = Enum.KeyCode.R,
-    F = Enum.KeyCode.F,
-    C = Enum.KeyCode.C,
-    V = Enum.KeyCode.V,
-    X = Enum.KeyCode.X,
-    Z = Enum.KeyCode.Z
-}
-
-local aimbotActive = false
-
+-- Обработка ввода для правой кнопки мыши
 inputService.InputBegan:Connect(function(input)
-    local selectedKey = keyBinds[aimbotSettings.TriggerKey]
-    if selectedKey then
-        if (input.UserInputType == selectedKey and (aimbotSettings.TriggerKey == "MouseButton2" or aimbotSettings.TriggerKey == "MouseButton1")) or
-           (input.KeyCode == selectedKey and aimbotSettings.TriggerKey ~= "MouseButton2" and aimbotSettings.TriggerKey ~= "MouseButton1") then
-            aimbotActive = true
-        end
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        aimbotActive = aimbotSettings.Enabled and aimbotSettings.ToggleState
     end
 end)
 
 inputService.InputEnded:Connect(function(input)
-    local selectedKey = keyBinds[aimbotSettings.TriggerKey]
-    if selectedKey then
-        if (input.UserInputType == selectedKey and (aimbotSettings.TriggerKey == "MouseButton2" or aimbotSettings.TriggerKey == "MouseButton1")) or
-           (input.KeyCode == selectedKey and aimbotSettings.TriggerKey ~= "MouseButton2" and aimbotSettings.TriggerKey ~= "MouseButton1") then
-            aimbotActive = false
-        end
+    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+        aimbotActive = false
     end
 end)
 
@@ -385,7 +406,7 @@ end
 runService.RenderStepped:Connect(function()
     fovCircle.Position = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2)
     
-    if aimbotSettings.Enabled and (aimbotActive or aimbotSettings.ToggleMode) then
+    if aimbotActive then
         local closestPlayer = getClosestPlayer()
         if closestPlayer and closestPlayer.Character then
             local aimPart = closestPlayer.Character:FindFirstChild(aimbotSettings.AimPart)
