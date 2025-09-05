@@ -49,6 +49,28 @@ local Window = Rayfield:CreateWindow({
    }
 })
 
+-- 🆕 Вкладка с информацией о биндах
+local KeybindsTab = Window:CreateTab("⌨️ Управление", 0)
+local KeybindsSection = KeybindsTab:CreateSection("📋 Список биндов")
+
+-- Таблица с информацией о биндах
+local keybindsInfo = {
+    {"Q", "Включение/выключение Aim Bot"},
+    {"Правая кнопка мыши", "Удержание для Aim Bot"},
+    {"F", "Безопасная зона Kill All"},
+    {"G", "Телекинез V5"},
+    {"T", "Zombie Script"},
+    {"Y", "G-Men Script"}
+}
+
+-- Создаем текст с информацией о биндах
+local keybindsText = "📋 СПИСОК УПРАВЛЕНИЯ:\n\n"
+for _, bind in ipairs(keybindsInfo) do
+    keybindsText = keybindsText .. "🔹 " .. bind[1] .. " - " .. bind[2] .. "\n"
+end
+
+local KeybindsLabel = KeybindsTab:CreateLabel(keybindsText)
+
 -- 📜 Вкладка со скриптами
 local ScriptsTab = Window:CreateTab("📜 Готовые скрипты", 0)
 local FEScriptSection = ScriptsTab:CreateSection("⚡ FE SCRIPTS 🚀")
@@ -93,110 +115,6 @@ local TelekinesisBtn = ScriptsTab:CreateButton({
    end,
 })
 
--- 🦘 Бесконечные прыжки
-local InfiniteJumpBtn = ScriptsTab:CreateButton({
-   Name = "🦘 Infinite Jump | FE",
-   Callback = function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/U5y7pWbJ"))()
-      Rayfield:Notify({
-         Title = "✅ Успех!",
-         Content = "Бесконечные прыжки активированы!",
-         Duration = 3,
-      })
-   end,
-})
-
--- 🏃 Высокая скорость
-local SpeedBtn = ScriptsTab:CreateButton({
-   Name = "🏃 Speed Hack | FE",
-   Callback = function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/zXk4Rqg2"))()
-      Rayfield:Notify({
-         Title = "✅ Успех!",
-         Content = "Скорость увеличена!",
-         Duration = 3,
-      })
-   end,
-})
-
--- ✈️ Полёт
-local FlyBtn = ScriptsTab:CreateButton({
-   Name = "✈️ Fly Script | FE",
-   Callback = function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/MY1u0WZz"))()
-      Rayfield:Notify({
-         Title = "✅ Успех!",
-         Content = "Полёт активирован!",
-         Duration = 3,
-      })
-   end,
-})
-
--- 🛡️ God Mode
-local GodModeBtn = ScriptsTab:CreateButton({
-   Name = "🛡️ God Mode | FE",
-   Callback = function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/4XJZc7Y9"))()
-      Rayfield:Notify({
-         Title = "✅ Успех!",
-         Content = "Режим бога активирован!",
-         Duration = 3,
-      })
-   end,
-})
-
--- 👻 Esp
-local EspBtn = ScriptsTab:CreateButton({
-   Name = "👻 ESP | FE",
-   Callback = function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/5KJZc8Y0"))()
-      Rayfield:Notify({
-         Title = "✅ Успех!",
-         Content = "ESP активирован!",
-         Duration = 3,
-      })
-   end,
-})
-
--- 💰 Auto Farm
-local AutoFarmBtn = ScriptsTab:CreateButton({
-   Name = "💰 Auto Farm | FE",
-   Callback = function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/6LJZc9Y1"))()
-      Rayfield:Notify({
-         Title = "✅ Успех!",
-         Content = "Авто-ферма запущена!",
-         Duration = 3,
-      })
-   end,
-})
-
--- 🔫 Gun Mods
-local GunModsBtn = ScriptsTab:CreateButton({
-   Name = "🔫 Gun Mods | FE",
-   Callback = function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/7MJZd0Y2"))()
-      Rayfield:Notify({
-         Title = "✅ Успех!",
-         Content = "Моды на оружие активированы!",
-         Duration = 3,
-      })
-   end,
-})
-
--- 🌟 VIP Script
-local VipBtn = ScriptsTab:CreateButton({
-   Name = "🌟 VIP Script | FE",
-   Callback = function()
-      loadstring(game:HttpGet("https://pastebin.com/raw/8NJZe1Y3"))()
-      Rayfield:Notify({
-         Title = "✅ Успех!",
-         Content = "VIP скрипт активирован!",
-         Duration = 3,
-      })
-   end,
-})
-
 -- 🦅 Infinite Yield
 local InfiniteYieldBtn = ScriptsTab:CreateButton({
    Name = "🦅 Infinite Yield | FE",
@@ -219,15 +137,12 @@ local aimbotSettings = {
     TeamCheck = false,
     Smoothness = 0.3,
     FOV = 120,
-    AimPart = "Head",
-    TriggerKey = "MouseButton2",
     UseMouse = true,
     FOVCircle = false,
     FOVColor = Color3.fromRGB(255, 255, 255),
-    FOVThickness = 2,
-    
-    -- Новые настройки для переключения режима
-    ToggleState = false
+    ToggleState = false,
+    Keybind = "Q",
+    UseKeybind = false
 }
 
 local camera = workspace.CurrentCamera
@@ -241,26 +156,28 @@ local fovCircle = Drawing.new("Circle")
 fovCircle.Visible = false
 fovCircle.Radius = aimbotSettings.FOV
 fovCircle.Color = aimbotSettings.FOVColor
-fovCircle.Thickness = aimbotSettings.FOVThickness
+fovCircle.Thickness = 2
 fovCircle.Position = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2)
 
 -- Переменная для отслеживания состояния
 local aimbotActive = false
 
--- Keybind для переключения режима на Q
-local ToggleKeybind = AimBotTab:CreateKeybind({
-   Name = "Включить/Выключить (Q)",
-   CurrentKeybind = "Q",
-   HoldToInteract = false,
-   Flag = "AimBotToggleKey",
-   Callback = function()
-       aimbotSettings.ToggleState = not aimbotSettings.ToggleState
-       Rayfield:Notify({
-           Title = "🎯 Aim Bot",
-           Content = aimbotSettings.ToggleState and "Включен - используй RightClick" or "Выключен",
-           Duration = 2,
-       })
-   end,
+-- Создаем кейбинд для аимбота
+local AimKeybind = AimBotTab:CreateKeybind({
+    Name = "Клавиша для Aim Bot",
+    CurrentKeybind = aimbotSettings.Keybind,
+    HoldToInteract = false,
+    Flag = "AimKeybind",
+    Callback = function(Keybind)
+        if aimbotSettings.UseKeybind and aimbotSettings.Enabled then
+            aimbotActive = not aimbotActive
+            Rayfield:Notify({
+                Title = "🎯 Aim Bot",
+                Content = "Aim Bot " .. (aimbotActive and "активирован" or "деактивирован"),
+                Duration = 2,
+            })
+        end
+    end,
 })
 
 local AimEnabledToggle = AimBotTab:CreateToggle({
@@ -271,7 +188,16 @@ local AimEnabledToggle = AimBotTab:CreateToggle({
       fovCircle.Visible = Value and aimbotSettings.FOVCircle
       if not Value then
           aimbotSettings.ToggleState = false
+          aimbotActive = false
       end
+   end,
+})
+
+local UseKeybindToggle = AimBotTab:CreateToggle({
+   Name = "Использовать клавишу для активации",
+   CurrentValue = aimbotSettings.UseKeybind,
+   Callback = function(Value)
+      aimbotSettings.UseKeybind = Value
    end,
 })
 
@@ -285,7 +211,7 @@ local TeamCheckToggle = AimBotTab:CreateToggle({
 
 local SmoothnessSlider = AimBotTab:CreateSlider({
    Name = "Сглаживание",
-   Range = {0.1, 1},
+   Range = {0.1, 0.5},
    Increment = 0.05,
    Suffix = "x",
    CurrentValue = aimbotSettings.Smoothness,
@@ -315,33 +241,12 @@ local FOVCircleToggle = AimBotTab:CreateToggle({
    end,
 })
 
-local FOVThicknessSlider = AimBotTab:CreateSlider({
-   Name = "Толщина FOV круга",
-   Range = {1, 5},
-   Increment = 1,
-   Suffix = "px",
-   CurrentValue = aimbotSettings.FOVThickness,
-   Callback = function(Value)
-      aimbotSettings.FOVThickness = Value
-      fovCircle.Thickness = Value
-   end,
-})
-
 local FOVColorPicker = AimBotTab:CreateColorPicker({
    Name = "Цвет FOV круга",
    Color = aimbotSettings.FOVColor,
    Callback = function(Value)
       aimbotSettings.FOVColor = Value
       fovCircle.Color = Value
-   end,
-})
-
-local AimPartDropdown = AimBotTab:CreateDropdown({
-   Name = "Часть тела для прицеливания",
-   Options = {"Head", "HumanoidRootPart", "UpperTorso"},
-   CurrentOption = aimbotSettings.AimPart,
-   Callback = function(Option)
-      aimbotSettings.AimPart = Option
    end,
 })
 
@@ -353,28 +258,28 @@ local MouseAimToggle = AimBotTab:CreateToggle({
    end,
 })
 
--- Обработка ввода для правой кнопки мыши
+-- Обработка ввода для правой кнопки мыши (если кейбинд не используется)
 inputService.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then
-        aimbotActive = aimbotSettings.Enabled and aimbotSettings.ToggleState
+    if not aimbotSettings.UseKeybind and input.UserInputType == Enum.UserInputType.MouseButton2 then
+        aimbotActive = aimbotSettings.Enabled
     end
 end)
 
 inputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton2 then
+    if not aimbotSettings.UseKeybind and input.UserInputType == Enum.UserInputType.MouseButton2 then
         aimbotActive = false
     end
 end)
 
 local function getClosestPlayer()
-    if not localPlayer.Character then return nil end
+    if not localPlayer.Character or not localPlayer.Character:FindFirstChild("HumanoidRootPart") then return nil end
     
     local closestPlayer = nil
     local closestDistance = aimbotSettings.FOV
     local mousePos = inputService:GetMouseLocation()
     
     for _, player in ipairs(players:GetPlayers()) do
-        if player ~= localPlayer and player.Character then
+        if player ~= localPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             local character = player.Character
             local humanoid = character:FindFirstChildOfClass("Humanoid")
             
@@ -383,9 +288,9 @@ local function getClosestPlayer()
                     continue
                 end
                 
-                local aimPart = character:FindFirstChild(aimbotSettings.AimPart)
-                if aimPart then
-                    local screenPos, onScreen = camera:WorldToViewportPoint(aimPart.Position)
+                local head = character:FindFirstChild("Head")
+                if head then
+                    local screenPos, onScreen = camera:WorldToViewportPoint(head.Position)
                     
                     if onScreen then
                         local distance = (Vector2.new(screenPos.X, screenPos.Y) - mousePos).Magnitude
@@ -409,15 +314,16 @@ runService.RenderStepped:Connect(function()
     if aimbotActive then
         local closestPlayer = getClosestPlayer()
         if closestPlayer and closestPlayer.Character then
-            local aimPart = closestPlayer.Character:FindFirstChild(aimbotSettings.AimPart)
-            if aimPart then
-                local targetPosition = aimPart.Position
+            local head = closestPlayer.Character:FindFirstChild("Head")
+            
+            if head then
+                local targetPosition = head.Position
                 
                 if aimbotSettings.UseMouse then
                     local screenPos = camera:WorldToScreenPoint(targetPosition)
                     if screenPos then
                         local mouse = game:GetService("Players").LocalPlayer:GetMouse()
-                        local smoothness = math.clamp(aimbotSettings.Smoothness, 0.1, 1)
+                        local smoothness = math.clamp(aimbotSettings.Smoothness, 0.1, 0.5)
                         
                         mousemoverel(
                             (screenPos.X - mouse.X) * smoothness,
@@ -434,607 +340,6 @@ runService.RenderStepped:Connect(function()
     end
 end)
 
--- 👁️ Вкладка Visuals
-local VisualsTab = Window:CreateTab("👁️ Visuals", 0)
-local VisualsSection = VisualsTab:CreateSection("ESP Settings")
-
-local visualsSettings = {
-    Enabled = false,
-    Box3D = true,
-    Box2D = true,
-    Tracers = true,
-    Names = true,
-    Health = true,
-    Distance = true,
-    TeamCheck = false,
-    MaxDistance = 1000,
-    
-    BoxColor = Color3.fromRGB(0, 255, 0),
-    TracerColor = Color3.fromRGB(255, 0, 0),
-    NameColor = Color3.fromRGB(255, 255, 255),
-    HealthColor = Color3.fromRGB(255, 0, 0),
-    DistanceColor = Color3.fromRGB(200, 200, 200),
-    
-    BoxThickness = 1,
-    TracerThickness = 1,
-    TextSize = 14,
-    
-    Box2DWidth = 50,
-    Box2DHeight = 80,
-    Box3DSize = 2.0,
-    TracerFrom = "Bottom",
-    
-    -- Новые настройки позиционирования
-    Box2DVerticalOffset = 0,
-    Box2DHorizontalOffset = 0,
-    NameVerticalOffset = -80,
-    HealthVerticalOffset = -60,
-    DistanceVerticalOffset = -40,
-    TracerFromPosition = "Bottom"
-}
-
-local visualsObjects = {}
-
-local function createVisuals(player)
-    if visualsObjects[player] then return end
-    
-    visualsObjects[player] = {
-        Box3D = {},
-        Box2D = Drawing.new("Square"),
-        Tracer = Drawing.new("Line"),
-        Name = Drawing.new("Text"),
-        Health = Drawing.new("Text"),
-        Distance = Drawing.new("Text")
-    }
-    
-    local vis = visualsObjects[player]
-    
-    -- 3D Box (12 линий)
-    for i = 1, 12 do
-        vis.Box3D[i] = Drawing.new("Line")
-        vis.Box3D[i].Visible = false
-        vis.Box3D[i].Color = visualsSettings.BoxColor
-        vis.Box3D[i].Thickness = visualsSettings.BoxThickness
-    end
-    
-    -- 2D Box
-    vis.Box2D.Visible = false
-    vis.Box2D.Color = visualsSettings.BoxColor
-    vis.Box2D.Thickness = visualsSettings.BoxThickness
-    vis.Box2D.Filled = false
-    
-    -- Tracer
-    vis.Tracer.Visible = false
-    vis.Tracer.Color = visualsSettings.TracerColor
-    vis.Tracer.Thickness = visualsSettings.TracerThickness
-    
-    -- Name
-    vis.Name.Visible = false
-    vis.Name.Color = visualsSettings.NameColor
-    vis.Name.Size = visualsSettings.TextSize
-    vis.Name.Center = true
-    vis.Name.Outline = true
-    
-    -- Health
-    vis.Health.Visible = false
-    vis.Health.Color = visualsSettings.HealthColor
-    vis.Health.Size = visualsSettings.TextSize
-    vis.Health.Center = true
-    vis.Health.Outline = true
-    
-    -- Distance
-    vis.Distance.Visible = false
-    vis.Distance.Color = visualsSettings.DistanceColor
-    vis.Distance.Size = visualsSettings.TextSize
-    vis.Distance.Center = true
-    vis.Distance.Outline = true
-end
-
-local function updateVisuals(player)
-    if not visualsSettings.Enabled or not visualsObjects[player] or not player.Character then return end
-    
-    local character = player.Character
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-    local rootPart = character:FindFirstChild("HumanoidRootPart")
-    local head = character:FindFirstChild("Head")
-    
-    if not humanoid or not rootPart or not head or humanoid.Health <= 0 then
-        for _, obj in pairs(visualsObjects[player]) do
-            if type(obj) == "table" then
-                for _, line in pairs(obj) do
-                    line.Visible = false
-                end
-            else
-                obj.Visible = false
-            end
-        end
-        return
-    end
-    
-    local teamColor = visualsSettings.BoxColor
-    if visualsSettings.TeamCheck and player.Team == localPlayer.Team then
-        teamColor = Color3.fromRGB(0, 0, 255)
-    end
-    
-    for _, obj in pairs(visualsObjects[player]) do
-        if type(obj) == "table" then
-            for _, line in pairs(obj) do
-                line.Color = teamColor
-                line.Thickness = visualsSettings.BoxThickness
-            end
-        elseif obj == visualsObjects[player].Tracer then
-            obj.Color = visualsSettings.TracerColor
-            obj.Thickness = visualsSettings.TracerThickness
-        elseif obj == visualsObjects[player].Name then
-            obj.Color = visualsSettings.NameColor
-            obj.Size = visualsSettings.TextSize
-        elseif obj == visualsObjects[player].Health then
-            obj.Color = visualsSettings.HealthColor
-            obj.Size = visualsSettings.TextSize
-        elseif obj == visualsObjects[player].Distance then
-            obj.Color = visualsSettings.DistanceColor
-            obj.Size = visualsSettings.TextSize
-        else
-            obj.Color = teamColor
-            obj.Thickness = visualsSettings.BoxThickness
-        end
-    end
-    
-    local rootPos, rootVis = camera:WorldToViewportPoint(rootPart.Position)
-    local headPos, headVis = camera:WorldToViewportPoint(head.Position)
-    
-    if not rootVis or not headVis then
-        for _, obj in pairs(visualsObjects[player]) do
-            if type(obj) == "table" then
-                for _, line in pairs(obj) do
-                    line.Visible = false
-                end
-            else
-                obj.Visible = false
-            end
-        end
-        return
-    end
-    
-    local distance = (rootPart.Position - localPlayer.Character.HumanoidRootPart.Position).Magnitude
-    if distance > visualsSettings.MaxDistance then
-        for _, obj in pairs(visualsObjects[player]) do
-            if type(obj) == "table" then
-                for _, line in pairs(obj) do
-                    line.Visible = false
-                end
-            else
-                obj.Visible = false
-            end
-        end
-        return
-    end
-    
-    -- 3D Box
-    if visualsSettings.Box3D then
-        local scale = visualsSettings.Box3DSize
-        local size = Vector3.new(scale, scale * 1.5, scale)
-        
-        local points = {
-            rootPart.CFrame * CFrame.new(-size.X, size.Y, -size.Z),
-            rootPart.CFrame * CFrame.new(-size.X, size.Y, size.Z),
-            rootPart.CFrame * CFrame.new(size.X, size.Y, size.Z),
-            rootPart.CFrame * CFrame.new(size.X, size.Y, -size.Z),
-            rootPart.CFrame * CFrame.new(-size.X, -size.Y, -size.Z),
-            rootPart.CFrame * CFrame.new(-size.X, -size.Y, size.Z),
-            rootPart.CFrame * CFrame.new(size.X, -size.Y, size.Z),
-            rootPart.CFrame * CFrame.new(size.X, -size.Y, -size.Z)
-        }
-        
-        local screenPoints = {}
-        for i, point in ipairs(points) do
-            screenPoints[i] = camera:WorldToViewportPoint(point.Position)
-        end
-        
-        local connections = {
-            {1,2}, {2,3}, {3,4}, {4,1}, {5,6}, {6,7}, {7,8}, {8,5}, {1,5}, {2,6}, {3,7}, {4,8}
-        }
-        
-        for i, conn in ipairs(connections) do
-            local line = visualsObjects[player].Box3D[i]
-            if screenPoints[conn[1]] and screenPoints[conn[2]] then
-                line.From = Vector2.new(screenPoints[conn[1]].X, screenPoints[conn[1]].Y)
-                line.To = Vector2.new(screenPoints[conn[2]].X, screenPoints[conn[2]].Y)
-                line.Visible = true
-            else
-                line.Visible = false
-            end
-        end
-    else
-        for _, line in pairs(visualsObjects[player].Box3D) do
-            line.Visible = false
-        end
-    end
-    
-    -- 2D Box (правильное позиционирование вокруг игрока)
-    if visualsSettings.Box2D then
-        local rootScreenPos = camera:WorldToViewportPoint(rootPart.Position)
-        local headScreenPos = camera:WorldToViewportPoint(head.Position)
-        
-        local height = math.abs(headScreenPos.Y - rootScreenPos.Y) * 2
-        local width = height / 2
-        
-        visualsObjects[player].Box2D.Size = Vector2.new(
-            visualsSettings.Box2DWidth + width / 2,
-            visualsSettings.Box2DHeight + height / 2
-        )
-        
-        visualsObjects[player].Box2D.Position = Vector2.new(
-            rootScreenPos.X - visualsSettings.Box2DWidth/2 + visualsSettings.Box2DHorizontalOffset,
-            rootScreenPos.Y - height + visualsSettings.Box2DVerticalOffset
-        )
-        visualsObjects[player].Box2D.Visible = true
-    else
-        visualsObjects[player].Box2D.Visible = false
-    end
-    
-    -- Tracer (исправленная работа)
-    if visualsSettings.Tracers then
-        local rootScreenPos = camera:WorldToViewportPoint(rootPart.Position)
-        
-        local fromPosition
-        if visualsSettings.TracerFromPosition == "Bottom" then
-            fromPosition = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y)
-        elseif visualsSettings.TracerFromPosition == "Top" then
-            fromPosition = Vector2.new(camera.ViewportSize.X/2, 0)
-        else -- Middle
-            fromPosition = Vector2.new(camera.ViewportSize.X/2, camera.ViewportSize.Y/2)
-        end
-        
-        visualsObjects[player].Tracer.From = fromPosition
-        visualsObjects[player].Tracer.To = Vector2.new(rootScreenPos.X, rootScreenPos.Y)
-        visualsObjects[player].Tracer.Visible = true
-    else
-        visualsObjects[player].Tracer.Visible = false
-    end
-    
-    -- Name
-    if visualsSettings.Names then
-        local headScreenPos = camera:WorldToViewportPoint(head.Position)
-        visualsObjects[player].Name.Text = player.Name
-        visualsObjects[player].Name.Position = Vector2.new(
-            headScreenPos.X,
-            headScreenPos.Y + visualsSettings.NameVerticalOffset
-        )
-        visualsObjects[player].Name.Visible = true
-    else
-        visualsObjects[player].Name.Visible = false
-    end
-    
-    -- Health
-    if visualsSettings.Health then
-        local headScreenPos = camera:WorldToViewportPoint(head.Position)
-        visualsObjects[player].Health.Text = "HP: " .. math.floor(humanoid.Health)
-        visualsObjects[player].Health.Position = Vector2.new(
-            headScreenPos.X,
-            headScreenPos.Y + visualsSettings.HealthVerticalOffset
-        )
-        visualsObjects[player].Health.Visible = true
-    else
-        visualsObjects[player].Health.Visible = false
-    end
-    
-    -- Distance
-    if visualsSettings.Distance then
-        local headScreenPos = camera:WorldToViewportPoint(head.Position)
-        visualsObjects[player].Distance.Text = math.floor(distance) .. " studs"
-        visualsObjects[player].Distance.Position = Vector2.new(
-            headScreenPos.X,
-            headScreenPos.Y + visualsSettings.DistanceVerticalOffset
-        )
-        visualsObjects[player].Distance.Visible = true
-    else
-        visualsObjects[player].Distance.Visible = false
-    end
-end
-
-local function clearVisuals(player)
-    if visualsObjects[player] then
-        for _, obj in pairs(visualsObjects[player]) do
-            if type(obj) == "table" then
-                for _, line in pairs(obj) do
-                    pcall(function() line:Remove() end)
-                end
-            else
-                pcall(function() obj:Remove() end)
-            end
-        end
-        visualsObjects[player] = nil
-    end
-end
-
-local function clearAllVisuals()
-    for player, _ in pairs(visualsObjects) do
-        clearVisuals(player)
-    end
-end
-
--- Настройки Visuals
-local VisualsEnabledToggle = VisualsTab:CreateToggle({
-   Name = "Включить Visuals",
-   CurrentValue = visualsSettings.Enabled,
-   Callback = function(Value)
-      visualsSettings.Enabled = Value
-      if not Value then
-          clearAllVisuals()
-      else
-          for _, player in ipairs(players:GetPlayers()) do
-              if player ~= localPlayer then
-                  createVisuals(player)
-              end
-          end
-      end
-   end,
-})
-
-local Box3DToggle = VisualsTab:CreateToggle({
-   Name = "3D Box",
-   CurrentValue = visualsSettings.Box3D,
-   Callback = function(Value)
-      visualsSettings.Box3D = Value
-   end,
-})
-
-local Box2DToggle = VisualsTab:CreateToggle({
-   Name = "2D Box",
-   CurrentValue = visualsSettings.Box2D,
-   Callback = function(Value)
-      visualsSettings.Box2D = Value
-   end,
-})
-
-local TracersToggle = VisualsTab:CreateToggle({
-   Name = "Tracers",
-   CurrentValue = visualsSettings.Tracers,
-   Callback = function(Value)
-      visualsSettings.Tracers = Value
-   end,
-})
-
-local NamesToggle = VisualsTab:CreateToggle({
-   Name = "Names",
-   CurrentValue = visualsSettings.Names,
-   Callback = function(Value)
-      visualsSettings.Names = Value
-   end,
-})
-
-local HealthToggle = VisualsTab:CreateToggle({
-   Name = "Health",
-   CurrentValue = visualsSettings.Health,
-   Callback = function(Value)
-      visualsSettings.Health = Value
-   end,
-})
-
-local DistanceToggle = VisualsTab:CreateToggle({
-   Name = "Distance",
-   CurrentValue = visualsSettings.Distance,
-   Callback = function(Value)
-      visualsSettings.Distance = Value
-   end,
-})
-
-local TeamCheckToggle = VisualsTab:CreateToggle({
-   Name = "Team Check",
-   CurrentValue = visualsSettings.TeamCheck,
-   Callback = function(Value)
-      visualsSettings.TeamCheck = Value
-   end,
-})
-
-local MaxDistanceSlider = VisualsTab:CreateSlider({
-   Name = "Max Distance",
-   Range = {100, 5000},
-   Increment = 100,
-   Suffix = "studs",
-   CurrentValue = visualsSettings.MaxDistance,
-   Callback = function(Value)
-      visualsSettings.MaxDistance = Value
-   end,
-})
-
--- Новые настройки позиционирования
-local Box2DWidthSlider = VisualsTab:CreateSlider({
-   Name = "2D Box Width",
-   Range = {20, 200},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.Box2DWidth,
-   Callback = function(Value)
-      visualsSettings.Box2DWidth = Value
-   end,
-})
-
-local Box2DHeightSlider = VisualsTab:CreateSlider({
-   Name = "2D Box Height",
-   Range = {40, 300},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.Box2DHeight,
-   Callback = function(Value)
-      visualsSettings.Box2DHeight = Value
-   end,
-})
-
-local Box2DVerticalOffsetSlider = VisualsTab:CreateSlider({
-   Name = "2D Box Vertical Offset",
-   Range = {-100, 100},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.Box2DVerticalOffset,
-   Callback = function(Value)
-      visualsSettings.Box2DVerticalOffset = Value
-   end,
-})
-
-local Box2DHorizontalOffsetSlider = VisualsTab:CreateSlider({
-   Name = "2D Box Horizontal Offset",
-   Range = {-100, 100},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.Box2DHorizontalOffset,
-   Callback = function(Value)
-      visualsSettings.Box2DHorizontalOffset = Value
-   end,
-})
-
-local NameVerticalOffsetSlider = VisualsTab:CreateSlider({
-   Name = "Name Vertical Offset",
-   Range = {-150, 150},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.NameVerticalOffset,
-   Callback = function(Value)
-      visualsSettings.NameVerticalOffset = Value
-   end,
-})
-
-local HealthVerticalOffsetSlider = VisualsTab:CreateSlider({
-   Name = "Health Vertical Offset",
-   Range = {-150, 150},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.HealthVerticalOffset,
-   Callback = function(Value)
-      visualsSettings.HealthVerticalOffset = Value
-   end,
-})
-
-local DistanceVerticalOffsetSlider = VisualsTab:CreateSlider({
-   Name = "Distance Vertical Offset",
-   Range = {-150, 150},
-   Increment = 5,
-   Suffix = "px",
-   CurrentValue = visualsSettings.DistanceVerticalOffset,
-   Callback = function(Value)
-      visualsSettings.DistanceVerticalOffset = Value
-   end,
-})
-
-local Box3DSizeSlider = VisualsTab:CreateSlider({
-   Name = "3D Box Size",
-   Range = {0.5, 5},
-   Increment = 0.1,
-   Suffix = "x",
-   CurrentValue = visualsSettings.Box3DSize,
-   Callback = function(Value)
-      visualsSettings.Box3DSize = Value
-   end,
-})
-
-local BoxThicknessSlider = VisualsTab:CreateSlider({
-   Name = "Box Thickness",
-   Range = {1, 10},
-   Increment = 1,
-   Suffix = "px",
-   CurrentValue = visualsSettings.BoxThickness,
-   Callback = function(Value)
-      visualsSettings.BoxThickness = Value
-   end,
-})
-
-local TracerThicknessSlider = VisualsTab:CreateSlider({
-   Name = "Tracer Thickness",
-   Range = {1, 10},
-   Increment = 1,
-   Suffix = "px",
-   CurrentValue = visualsSettings.TracerThickness,
-   Callback = function(Value)
-      visualsSettings.TracerThickness = Value
-   end,
-})
-
-local TextSizeSlider = VisualsTab:CreateSlider({
-   Name = "Text Size",
-   Range = {8, 24},
-   Increment = 1,
-   Suffix = "px",
-   CurrentValue = visualsSettings.TextSize,
-   Callback = function(Value)
-      visualsSettings.TextSize = Value
-   end,
-})
-
-local TracerFromDropdown = VisualsTab:CreateDropdown({
-   Name = "Tracer From Position",
-   Options = {"Bottom", "Top", "Middle"},
-   CurrentOption = visualsSettings.TracerFromPosition,
-   Callback = function(Option)
-      visualsSettings.TracerFromPosition = Option
-   end,
-})
-
--- Цветовые пикеры
-local BoxColorPicker = VisualsTab:CreateColorPicker({
-   Name = "Box Color",
-   Color = visualsSettings.BoxColor,
-   Callback = function(Value)
-      visualsSettings.BoxColor = Value
-   end,
-})
-
-local TracerColorPicker = VisualsTab:CreateColorPicker({
-   Name = "Tracer Color",
-   Color = visualsSettings.TracerColor,
-   Callback = function(Value)
-      visualsSettings.TracerColor = Value
-   end,
-})
-
-local NameColorPicker = VisualsTab:CreateColorPicker({
-   Name = "Name Color",
-   Color = visualsSettings.NameColor,
-   Callback = function(Value)
-      visualsSettings.NameColor = Value
-   end,
-})
-
-local HealthColorPicker = VisualsTab:CreateColorPicker({
-   Name = "Health Color",
-   Color = visualsSettings.HealthColor,
-   Callback = function(Value)
-      visualsSettings.HealthColor = Value
-   end,
-})
-
-local DistanceColorPicker = VisualsTab:CreateColorPicker({
-   Name = "Distance Color",
-   Color = visualsSettings.DistanceColor,
-   Callback = function(Value)
-      visualsSettings.DistanceColor = Value
-   end,
-})
-
--- Основной цикл Visuals
-runService.RenderStepped:Connect(function()
-    if not visualsSettings.Enabled then return end
-    
-    for _, player in ipairs(players:GetPlayers()) do
-        if player ~= localPlayer then
-            if not visualsObjects[player] then
-                createVisuals(player)
-            end
-            updateVisuals(player)
-        end
-    end
-end)
-
-players.PlayerRemoving:Connect(function(player)
-    clearVisuals(player)
-end)
-
-players.PlayerAdded:Connect(function(player)
-    if visualsSettings.Enabled then
-        createVisuals(player)
-    end
-end)
-
 -- ⚔️ Вкладка Убить Всех
 local KillAllTab = Window:CreateTab("⚔️ Убить Всех", 0)
 local KillAllSection = KillAllTab:CreateSection("Safe Zone Kill All")
@@ -1046,6 +351,22 @@ local safeZoneRadius = 20
 local isActive = false
 local killAllEnabled = true
 local ignoreFriends = true
+
+-- Добавляем кейбинд для Kill All
+local KillAllKeybind = KillAllTab:CreateKeybind({
+    Name = "Клавиша для Kill All",
+    CurrentKeybind = "F",
+    HoldToInteract = false,
+    Flag = "KillAllKeybind",
+    Callback = function(Keybind)
+        killAllEnabled = not killAllEnabled
+        Rayfield:Notify({
+            Title = "⚔️ Kill All",
+            Content = "Режим Kill All " .. (killAllEnabled and "включен" or "выключен"),
+            Duration = 2,
+        })
+    end,
+})
 
 local SafeZoneToggle = KillAllTab:CreateToggle({
    Name = "Включить Safe Zone",
@@ -1108,7 +429,6 @@ local FriendToggle = KillAllTab:CreateToggle({
    end,
 })
 
--- Safe Zone Visual
 local zonePart = Instance.new("Part")
 zonePart.Shape = Enum.PartType.Ball
 zonePart.Anchored = true
